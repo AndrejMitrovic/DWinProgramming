@@ -1,6 +1,6 @@
 # DWinProgramming - D WinAPI programming
-This is a collection of samples from Charles Petzold's Programming Windows book, 
-translated into the D programming language. It also contains a small collection 
+This is a collection of samples from Charles Petzold's Programming Windows book,
+translated into the D programming language. It also contains a small collection
 of other Windows API samples.
 
 See examples.txt for a description of the samples.
@@ -8,18 +8,14 @@ See examples.txt for a description of the samples.
 This project has been created by Andrej Mitrovic.
 Project Homepage: https://github.com/AndrejMitrovic/DWinProgramming
 
-## Clone
-Clone with `git clone --recursive git://github.com/AndrejMitrovic/DWinProgramming.git`
-
 ## Building Requirements
 - Windows XP or newer.
 - Compiler: [DMD] v2.059+ or [GDC] 2.058+.
 
 [DMD]: http://www.digitalmars.com/d/download.html
 [GDC]: https://bitbucket.org/goshawk/gdc/downloads
-    
+
 ## Building
-Make sure you've cloned with git clone --recursive'.
 
 Compile the build script:
 
@@ -28,7 +24,7 @@ Compile the build script:
 To build via DMD:
 
     $ build.exe
-    
+
 To build via GDC:
 
     $ build.exe GDC
@@ -46,31 +42,31 @@ Other options are: clean, debug.
 - Use `where.bat` to find out the location of an exe/batch file. ('where dmd')
 
 ## Optional Tools
-- HTOD: http://www.digitalmars.com/d/2.0/htod.html    
-    HTOD needs to be in your PATH. It's probably best to put it in the \DMD2\Windows\Bin 
+- HTOD: http://www.digitalmars.com/d/2.0/htod.html
+    HTOD needs to be in your PATH. It's probably best to put it in the \DMD2\Windows\Bin
     directory.
 
-- Microsoft RC compiler and header files. Without these the build script will use 
+- Microsoft RC compiler and header files. Without these the build script will use
   precompiled .res files.
-    - Unless you have Visual Studio installed, get it from:        
+    - Unless you have Visual Studio installed, get it from:
     http://www.microsoft.com/downloads/en/details.aspx?FamilyID=c17ba869-9671-4330-a63e-1fd44e0e2505&displaylang=en
     - RC needs to be in your PATH if you want to compile resources. If you have Visual Studio installed, you can use the Visual Studio Command Prompt.
-    
+
     Note: This is a big download, depending on what you select in the setup.
-    Note: DigitalMars has a resource compiler, but it still requires header files. 
+    Note: DigitalMars has a resource compiler, but it still requires header files.
           See the "Using Resources in D" Tutorial in the Links section.
 
     - Create the RCINCLUDES environment variable and add paths to the header files needed
-      by the RC resource compiler. 
+      by the RC resource compiler.
       On an XP system these paths could be:
         C:\Program Files\Microsoft SDKs\Windows\v7.1\Include
         C:\Program Files\Microsoft Visual Studio 10.0\VC\include
         C:\Program Files\Microsoft Visual Studio 10.0\VC\atlmfc\include
-        
-      Typically the include paths for resource header files are different on each system, 
-      so you will have to adjust these.    
-          
-    Note: The build script will attempt to find these default paths if you don't have 
+
+      Typically the include paths for resource header files are different on each system,
+      so you will have to adjust these.
+
+    Note: The build script will attempt to find these default paths if you don't have
           RCINCLUDES already set up.
     Note: Setting up an environment variable might require you to log off and log on
           again before the build script can pick up the new changes.
@@ -86,10 +82,10 @@ any bugs in these samples are entirely my fault.
 File bugs here: https://github.com/AndrejMitrovic/DWinProgramming/issues
 
 ## Acknowledgments
-Thanks to the authors of the WindowsAPI translation project: 
+Thanks to the authors of the WindowsAPI translation project:
 http://dsource.org/projects/bindings/wiki/WindowsApi
 
-Big Thanks to Charles Petzold for writing a great Windows API programming book and 
+Big Thanks to Charles Petzold for writing a great Windows API programming book and
 for allowing me to host these code samples online.
 
 ## Contributors
@@ -113,7 +109,7 @@ How to make extensionless files open in your editor in WinXP: http://perishablep
 
 Programming Windows Homepage: http://www.charlespetzold.com/pw5/
 
-Programming Windows C Code Samples: http://www.charlespetzold.com/books.html 
+Programming Windows C Code Samples: http://www.charlespetzold.com/books.html
 (search for ProgWin5.zip)
 
 Charles Petzold FAQ: http://www.charlespetzold.com/faq.html
@@ -138,7 +134,7 @@ DDBG D Debugger: http://ddbg.mainia.de/doc.html
 
 Uncrustify - Code Beautifier: http://sourceforge.net/projects/uncrustify/develop
 
-UniversalIndentGUI - GUI Frontend for Code Beautifiers: 
+UniversalIndentGUI - GUI Frontend for Code Beautifiers:
 
 http://universalindent.sourceforge.net/
 
