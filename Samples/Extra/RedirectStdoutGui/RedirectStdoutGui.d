@@ -5,7 +5,7 @@ module RedirectStdoutGui;
     This app spawns another app with redirected stdout. The child
     app prints some strings to stdout at regular intervals (via a timer).
     We capture the strings and draw them to the screen via DrawText.
-    
+
     This isn't an ideal solution, but it's a start. The upcoming std.io
     replacement should come with stable IO redirection which will make
     this app much easier to write.
@@ -23,6 +23,7 @@ import std.conv;
 import std.exception;
 import std.file;
 import std.math;
+import std.path;
 import std.range;
 import std.string;
 import std.utf;
@@ -66,7 +67,7 @@ struct ProcessInfo
     HANDLE childStdinRead;
     HANDLE childStdinWrite;
     HANDLE childStdoutRead;
-    HANDLE childStdoutWrite;    
+    HANDLE childStdoutWrite;
 }
 
 void createProcessPipes(ref ProcessInfo procInfo)
@@ -141,7 +142,7 @@ void makeProcess(string procName, ProcessInfo procInfo)
         // of the child process, for example.
         CloseHandle(piProcInfo.hProcess);
         CloseHandle(piProcInfo.hThread);
-    }    
+    }
 }
 
 __gshared string stdoutString;
@@ -168,9 +169,9 @@ void readProcessPipe(size_t index, ProcessInfo procInfo)
     // data the child process has already written to it.
     if (!CloseHandle(procInfo.childStdoutWrite))
         ErrorExit(("StdOutWr CloseHandle"));
-        
+
     writefln("Process #%s:", index);
-    
+
     while (1)
     {
         bSuccess = ReadFile(procInfo.childStdoutRead, chBuf.ptr, BUFSIZE, &dwRead, NULL);
@@ -182,13 +183,13 @@ void readProcessPipe(size_t index, ProcessInfo procInfo)
         {
             if (capLineIndex == capturedLines.length)
                 capLineIndex = 0;
-            
+
             synchronized
             {
                 capturedLines[capLineIndex++] = line.idup;
             }
         }
-        
+
         //~ synchronized
         //~ {
             //~ stdoutString = chBuf[0..dwRead].idup;
@@ -199,8 +200,8 @@ void readProcessPipe(size_t index, ProcessInfo procInfo)
 __gshared ProcessInfo[1] processInfos;
 
 /*
- * Pick between spawn or taskPool.parallel. To make them 
- * both work I've had to make processInfos global and add 
+ * Pick between spawn or taskPool.parallel. To make them
+ * both work I've had to make processInfos global and add
  * forwarding functions for spawn(), which load a process
  * info by index.
  */
@@ -215,13 +216,13 @@ void executeProcReadPipes()
     {
         createProcessPipes(procInfo);
     }
-    
+
     writeln("\n->Start of child execution.\n");
-    
+
     makeProcess(0, exeString);
-    
+
     //~ Thread.sleep(dur!("seconds")(1));
-    
+
     // read out sequentally, if you want to do it in parallel you have to make
     // sure you don't interleave your writeln calls (see readProcessPipe)
     foreach (index, procInfo; processInfos)
@@ -230,7 +231,7 @@ void executeProcReadPipes()
         readProcessPipe(index, procInfo);
         writeln("\n->End readProcessPipe.\n");
     }
-    
+
     writeln("\n->End of child execution.\n");
 
     // The remaining open handles are cleaned up when this process terminates.
@@ -253,18 +254,18 @@ void ErrorExit(string lpszFunction)
         dw,
         MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
         cast(LPTSTR)&lpMsgBuf,
-        0, NULL);    
-    
+        0, NULL);
+
     lpDisplayBuf = cast(LPVOID)LocalAlloc(LMEM_ZEROINIT,
                                       (lstrlen(cast(LPCTSTR)lpMsgBuf) + lstrlen(cast(LPCTSTR)lpszFunction) + 40) * (TCHAR.sizeof));
-    
+
     auto str = format("%s failed with error %s: %s",
                       lpszFunction,
                       dw,
                       fromUTF16z(cast(wchar*)lpMsgBuf)
                       );
     writeln(str);
-    
+
     // protip: never use exit/exitProcess, your scope() statements won't run
     // and you'll end up with garbage on the drive (temporary files), etc.
     enforce(0);
@@ -309,11 +310,15 @@ int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int
     if (!exists(exeString))
     {
         import std.file;
-        chdir(r".\subprocess");
+        import std.exception;
+
+        string path = buildPath(".".absolutePath, r"Samples\Extra\RedirectStdoutGui\subprocess");
+        enforce(path.exists, path);
+        chdir(path);
         system(`..\..\..\..\build.exe "%CD%"`);
         chdir(r"..\");
     }
-    
+
     string appName = "HelloWin";
     HWND hwnd;
     MSG  msg;
@@ -382,21 +387,21 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             InvalidateRect(hwnd, NULL, FALSE);
             return 0;
         }
-        
+
         case WM_PAINT:
         {
             hdc = BeginPaint(hwnd, &ps);
             scope(exit) EndPaint(hwnd, &ps);
 
             GetClientRect(hwnd, &rect);
-            
+
             rect.top = 0;
             foreach (line; capturedLines)
             {
                 DrawText(hdc, toUTF16z(line), -1, &rect, DT_SINGLELINE);
                 rect.top += 10;
             }
-            
+
             return 0;
         }
 

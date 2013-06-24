@@ -16,3 +16,4 @@ build-d-*
 *.o
 *.di
 *.dll
+*.lib

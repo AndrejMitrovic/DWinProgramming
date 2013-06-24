@@ -10,12 +10,17 @@ Project Homepage: https://github.com/AndrejMitrovic/DWinProgramming
 
 ## Building Requirements
 - Windows XP or newer.
-- Compiler: [DMD] v2.059+ or [GDC] 2.058+.
+- Compiler: [DMD] v2.063+ or [GDC] 2.063+.
 
 [DMD]: http://www.digitalmars.com/d/download.html
 [GDC]: https://bitbucket.org/goshawk/gdc/downloads
 
 ## Building
+
+**NOTE**: At least two samples will fail to build on 2.063 due to these issues:
+
+- [Issue 10468](http://d.puremagic.com/issues/show_bug.cgi?id=10468) - Regression (2.063): Lockstep no longer works with iota
+- [Issue 10469](http://d.puremagic.com/issues/show_bug.cgi?id=10469) - WinAPI declarations in std.process should be moved to core.sys.windows.windows
 
 Compile the build script:
 

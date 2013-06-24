@@ -19,8 +19,6 @@ enum curdir = ".";
 
 alias std.path.absolutePath rel2abs;
 
-import pipes;
-
 string[] RCINCLUDES = [r"C:\Program Files\Microsoft SDKs\Windows\v7.1\Include",
                        r"C:\Program Files\Microsoft Visual Studio 10.0\VC\include",
                        r"C:\Program Files\Microsoft Visual Studio 10.0\VC\atlmfc\include"];
@@ -75,7 +73,7 @@ void checkTools()
 {
     system("echo int x; > test.h");
 
-    auto res = execute("cmd /c htod test.h").status;
+    auto res = executeShell("cmd /c htod test.h").status;
     if (res == -1 || res == 1)
     {
         skipHeaderCompile = true;
@@ -92,7 +90,7 @@ void checkTools()
                    ? "cmd /c rc test.rc > nul"
                    : "cmd /c windres test.rc > nul";
 
-        res = execute(cmd).status;
+        res = executeShell(cmd).status;
         if (res == -1 || res == 1)
         {
             skipResCompile = true;
@@ -202,7 +200,7 @@ bool buildProject(string dir, out string errorMsg)
     // have to clean .o files for GCC
     if (compiler == Compiler.GDC)
     {
-        execute("cmd /c del " ~ rel2abs(dir) ~ r"\*.o > nul");
+        executeShell("cmd /c del " ~ rel2abs(dir) ~ r"\*.o > nul");
     }
 
     if (resources.length)
@@ -229,7 +227,7 @@ bool buildProject(string dir, out string errorMsg)
             }
         }
 
-        auto pc = execute(res_cmd);
+        auto pc = executeShell(res_cmd);
         auto output = pc.output;
         auto res = pc.status;
 
@@ -293,7 +291,7 @@ bool buildProject(string dir, out string errorMsg)
 
         // major note: buggy, has weird threading issues,
         // it's better to wait for the new std.process module.
-        /+ auto pc = execute(cmd);
+        /+ auto pc = executeShell(cmd);
         auto output = pc.output;
         auto res = pc.status;
         if (res == -1 || res == 1)
@@ -342,8 +340,8 @@ void buildProjectDirs(string[] dirs, bool cleanOnly = false)
         {
             if (cleanOnly)
             {
-                execute("cmd /c del " ~ dir ~ r"\" ~ "*.obj > nul");
-                execute("cmd /c del " ~ dir ~ r"\" ~ "*.exe > nul");
+                executeShell("cmd /c del " ~ dir ~ r"\" ~ "*.obj > nul");
+                executeShell("cmd /c del " ~ dir ~ r"\" ~ "*.exe > nul");
             }
             else
             {
@@ -381,12 +379,12 @@ void buildProjectDirs(string[] dirs, bool cleanOnly = false)
 
         if (cleanOnly)
         {
-            execute("cmd /c del *.obj > nul");
-            execute("cmd /c del *.o > nul");
-            execute("cmd /c del *.exe > nul");
-            execute("cmd /c del *.di  > nul");
-            execute("cmd /c del *.dll > nul");
-            execute("cmd /c del *.lib > nul");
+            executeShell("cmd /c del *.obj > nul");
+            executeShell("cmd /c del *.o > nul");
+            executeShell("cmd /c del *.exe > nul");
+            executeShell("cmd /c del *.di  > nul");
+            executeShell("cmd /c del *.dll > nul");
+            executeShell("cmd /c del *.lib > nul");
         }
         else
         {
@@ -400,10 +398,9 @@ void buildProjectDirs(string[] dirs, bool cleanOnly = false)
                                 : "-I. -version=Unicode -version=WindowsXP -L--subsystem -Lwindows";
 
 
-            auto procInfo3 = createProcessPipes();
             if (projScript.exists)
             {
-                auto pc = execute(projScript ~ " " ~ (Debug ? "-g" : "-L-Subsystem:Windows"));
+                auto pc = executeShell(projScript ~ " " ~ (Debug ? "-g" : "-L-Subsystem:Windows"));
                 auto output = pc.output;
                 auto res = pc.status;
 
