@@ -112,6 +112,9 @@ Code samples of using Win32 API and Cairo: https://github.com/AndrejMitrovic/cai
 How to make extensionless files open in your editor in WinXP: http://perishablepress.com/press/2006/08/08/associate-extensionless-files-with-notepad/
     Note: Also, make sure you hit the 'Open with' button and select your editor.
 
+How to make extensionless files open in your editor in Windows 7 and Windows 8:
+    http://superuser.com/a/566834/47065
+
 Programming Windows Homepage: http://www.charlespetzold.com/pw5/
 
 Programming Windows C Code Samples: http://www.charlespetzold.com/books.html
