@@ -44,7 +44,7 @@ class CDropSource : ComObject, IDropSource
         return S_OK;
     }
 
-    //	Return either S_OK, or DRAGDROP_S_USEDEFAULTCURSORS to instruct OLE to use the
+    //	Return either S_OK or DRAGDROP_S_USEDEFAULTCURSORS to instruct OLE to use the
     //  default mouse cursor images
     extern (Windows)
     HRESULT GiveFeedback(DWORD dwEffect)

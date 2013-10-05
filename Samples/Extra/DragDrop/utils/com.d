@@ -92,7 +92,7 @@ C newCom(C, T...)(T arguments)
 	return c;
 }
 
-class ComObject : IUnknown
+abstract class ComObject : IUnknown
 {
     /**
         Note: See Issue 4092, COM objects are allocated in the

@@ -13,7 +13,7 @@ import win32.wtypes;
 
 const ULONG MAX_FORMATS = 100;
 
-import save_clipboard.enum_format;
+import drop_source.enum_format;
 import utils.com;
 
 struct FormatStore
@@ -133,7 +133,9 @@ class DataObject : ComObject, IDataObject
                 if (_formatStores.length == 0 || ppEnumFormatEtc is null)
                     return E_INVALIDARG;
 
-                *ppEnumFormatEtc = newCom!ClassEnumFormatEtc(_formatStores.map!(a => a.formatetc));
+                auto obj = newCom!ClassEnumFormatEtc(_formatStores.map!(a => a.formatetc));
+                obj.AddRef();
+                *ppEnumFormatEtc = obj;
                 return S_OK;
             }
 

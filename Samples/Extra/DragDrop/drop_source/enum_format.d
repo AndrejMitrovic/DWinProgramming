@@ -1,5 +1,8 @@
 module drop_source.enum_format;
 
+import core.atomic;
+import core.memory;
+
 import std.algorithm;
 import std.array;
 import std.range;
@@ -28,16 +31,6 @@ class ClassEnumFormatEtc : ComObject, IEnumFORMATETC
         _index = index;
     }
 
-    // todo: move elsewhere
-    ~this()
-    {
-        foreach (formatEtc; _formatEtcArr)
-        {
-            if (formatEtc.ptd)
-                CoTaskMemFree(formatEtc.ptd);
-        }
-    }
-
     extern (Windows)
     override HRESULT QueryInterface(GUID* riid, void** ppv)
     {
@@ -49,6 +42,19 @@ class ClassEnumFormatEtc : ComObject, IEnumFORMATETC
         }
 
         return super.QueryInterface(riid, ppv);
+    }
+
+    extern (Windows)
+    override ULONG Release()
+    {
+        LONG lRef = atomicOp!"-="(_refCount, 1);
+        if (lRef == 0)
+        {
+            this.releaseMemory();
+            GC.removeRoot(cast(void*)this);
+        }
+
+        return cast(ULONG)lRef;
     }
 
     /**
@@ -99,8 +105,20 @@ class ClassEnumFormatEtc : ComObject, IEnumFORMATETC
         if (_formatEtcArr.length == 0 || ppEnumFormatEtc is null)
             return E_INVALIDARG;
 
-        *ppEnumFormatEtc = newCom!ClassEnumFormatEtc(_formatEtcArr, _index);
+        auto obj = newCom!ClassEnumFormatEtc(_formatEtcArr, _index);
+        obj.AddRef();
+        *ppEnumFormatEtc = obj;
         return S_OK;
+    }
+
+private:
+    private void releaseMemory()
+    {
+        foreach (formatEtc; _formatEtcArr)
+        {
+            if (formatEtc.ptd)
+                CoTaskMemFree(formatEtc.ptd);
+        }
     }
 
 private:
