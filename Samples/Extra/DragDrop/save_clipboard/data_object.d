@@ -133,7 +133,9 @@ class DataObject : ComObject, IDataObject
                 if (_formatStores.length == 0 || ppEnumFormatEtc is null)
                     return E_INVALIDARG;
 
-                *ppEnumFormatEtc = newCom!ClassEnumFormatEtc(_formatStores.map!(a => a.formatetc));
+                auto obj = newCom!ClassEnumFormatEtc(_formatStores.map!(a => a.formatetc));
+                obj.AddRef();
+                *ppEnumFormatEtc = obj;
                 return S_OK;
             }
 
