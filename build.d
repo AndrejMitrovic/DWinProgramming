@@ -180,10 +180,10 @@ bool buildProject(string dir, out string errorMsg)
     string exeName = rel2abs(dir) ~ r"\" ~ appName ~ ".exe";
     string LIBPATH = r".";
 
-    string debugFlags = "-IWindowsAPI -I. -version=Unicode -version=WindowsXP -g -w -wi";
+    string debugFlags = "-IWindowsAPI -I. -version=Unicode -version=WindowsXP -d -g -w -wi";
     string releaseFlags = (compiler == Compiler.DMD)
-                        ? "-IWindowsAPI -I. -version=Unicode -version=WindowsXP -L-Subsystem:Windows:4"
-                        : "-IWindowsAPI -I. -version=Unicode -version=WindowsXP -L--subsystem -Lwindows";
+                        ? "-IWindowsAPI -I. -version=Unicode -version=WindowsXP -d -L-Subsystem:Windows:4"
+                        : "-IWindowsAPI -I. -version=Unicode -version=WindowsXP -d -L--subsystem -Lwindows";
 
     string FLAGS = Debug ? debugFlags : releaseFlags;
 
