@@ -214,7 +214,7 @@ struct DECIMAL {
 		struct {
 			ubyte scale; // valid values are 0 to 28
 			ubyte sign; // 0 for positive, DECIMAL_NEG for negatives.
-			const ubyte DECIMAL_NEG = 0x80;
+			ubyte DECIMAL_NEG = 0x80;
 		}
 		USHORT signscale;
 	}
