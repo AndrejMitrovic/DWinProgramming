@@ -94,7 +94,7 @@ void checkTools()
         if (res == -1 || res == 1)
         {
             skipResCompile = true;
-            writeln("Warning: RC Compiler not found. Builder will use precompiled resources. See README for more details..");
+            writeln("Warning: RC Compiler not found. Builder will use precompiled resources. See README for more details.");
         }
 
         try { std.file.remove("test.rc");   } catch {};

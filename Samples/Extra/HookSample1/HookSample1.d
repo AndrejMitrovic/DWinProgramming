@@ -62,7 +62,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int i
     return result;
 }
 
-int ErrMsg(string s) 
+int ErrMsg(string s)
 {
     return MessageBox(null, s.toUTF16z, ("ERROR"), MB_OK | MB_ICONEXCLAMATION);
 }
@@ -128,7 +128,7 @@ MYHOOKDATA[NUMHOOKS] myhookdata;
 
 HWND gh_hwndMain;
 
-extern(Windows) 
+extern(Windows)
 LRESULT WndProc(HWND hwndMain, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     static BOOL[NUMHOOKS] afHooks;
@@ -185,23 +185,23 @@ LRESULT WndProc(HWND hwndMain, UINT uMsg, WPARAM wParam, LPARAM lParam)
                     {
                         // If the selected type of hook procedure isn't
                         // installed yet, install it and check the
-                        // associated menu item.                        
+                        // associated menu item.
                         myhookdata[index].hhook = SetWindowsHookEx(
                             myhookdata[index].nType,
                             myhookdata[index].hkprc,
                             cast(HINSTANCE)null,    // DLL handle, must be null for current thread handlers
                             GetCurrentThreadId());  // Thread ID, or 0 if used for all desktop threads
-                        
+
                         // SetWindowsHookEx: http://msdn.microsoft.com/en-us/library/ms644990%28v=VS.85%29.aspx
-                        
+
                         CheckMenuItem(hmenu, index, MF_BYCOMMAND | MF_CHECKED);
                         afHooks[index] = TRUE;
                     }
-                    else                        
+                    else
                     {
                         // If the selected type of hook procedure is
                         // already installed, remove it and remove the
-                        // check mark from the associated menu item.                        
+                        // check mark from the associated menu item.
                         UnhookWindowsHookEx(myhookdata[index].hhook);
                         CheckMenuItem(hmenu, index, MF_BYCOMMAND | MF_UNCHECKED);
                         afHooks[index] = FALSE;
@@ -211,8 +211,8 @@ LRESULT WndProc(HWND hwndMain, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
                 case IDM_APP_EXIT:
                     SendMessage(hwndMain, WM_CLOSE, 0, 0);
-                    return 0;                
-                
+                    return 0;
+
                 default:
                     return DefWindowProc(hwndMain, uMsg, wParam, lParam);
             }
@@ -222,9 +222,9 @@ LRESULT WndProc(HWND hwndMain, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         case WM_DESTROY:
             PostQuitMessage(0);
-            return 0;        
-        
-        
+            return 0;
+
+
         default:
             return DefWindowProc(hwndMain, uMsg, wParam, lParam);
     }
@@ -277,7 +277,7 @@ LRESULT CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
 /****************************************************************
    WH_GETMESSAGE hook procedure
 ****************************************************************/
-extern(Windows) 
+extern(Windows)
 LRESULT GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
     string szMSGBuf;
@@ -332,7 +332,7 @@ LRESULT GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
 /****************************************************************
    WH_DEBUG hook procedure
 ****************************************************************/
-extern(Windows) 
+extern(Windows)
 LRESULT DebugProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
     string szBuf;
@@ -439,7 +439,7 @@ LRESULT CBTProc(int nCode, WPARAM wParam, LPARAM lParam)
 /****************************************************************
    WH_MOUSE hook procedure
 ****************************************************************/
-extern(Windows) 
+extern(Windows)
 LRESULT MouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
     string szBuf;
@@ -461,7 +461,7 @@ LRESULT MouseProc(int nCode, WPARAM wParam, LPARAM lParam)
     hdc     = GetDC(gh_hwndMain);
     szBuf = format("MOUSE - nCode: %s, msg: %s, x: %s, y: %s, %s times   ",
                    nCode, szMsg, LOWORD(lParam), HIWORD(lParam), c++);
-    
+
     TextOut(hdc, 2, 95, szBuf.toUTF16z, szBuf.count);
     ReleaseDC(gh_hwndMain, hdc);
 
@@ -474,18 +474,18 @@ LRESULT MouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 extern(Windows)
 LRESULT KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
+    if (nCode < 0)  // do not process message
+        return CallNextHookEx(myhookdata[IDM_KEYBOARD].hhook, nCode, wParam, lParam);
+
     string szBuf;
     HDC  hdc;
     static int c = 0;
     size_t  cch;
     HRESULT hResult;
 
-    if (nCode < 0)  // do not process message
-        return CallNextHookEx(myhookdata[IDM_KEYBOARD].hhook, nCode, wParam, lParam);
-
     szBuf = format("KEYBOARD - nCode: %s, vk: %s, %s times ", nCode, wParam, c++);
     hdc     = GetDC(gh_hwndMain);
-    
+
     TextOut(hdc, 2, 115, szBuf.toUTF16z, szBuf.count);
     ReleaseDC(gh_hwndMain, hdc);
 
@@ -537,7 +537,7 @@ LRESULT MessageProc(int nCode, WPARAM wParam, LPARAM lParam)
 
     hdc     = GetDC(gh_hwndMain);
     szBuf = format("MSGFILTER  nCode: %s, msg: %s, %s times    ", szCode, szMsg, c++);
-    
+
     TextOut(hdc, 2, 135, szBuf.toUTF16z, szBuf.count);
     ReleaseDC(gh_hwndMain, hdc);
 

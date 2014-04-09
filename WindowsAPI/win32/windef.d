@@ -52,7 +52,7 @@ ubyte HIBYTE(ushort w)
 }
 
 
-template max(T) {
+/+ template max(T) {
     T max(T a, T b)
     {
         return a > b ? a : b;
@@ -64,7 +64,7 @@ template min(T) {
     {
         return a < b ? a : b;
     }
-}
+} +/
 
 enum NULL = null;
 //~ alias null NULL;
