@@ -67,7 +67,7 @@ HFONT EzCreateFont(HDC hdc, string szFaceName, int iDeciPtHeight,
 
     DPtoLP(hdc, &pt, 1);
 
-    lf.lfHeight         = -cast(int)(fabs(pt.y) / 10.0 + 0.5);
+    lf.lfHeight         = -cast(int)(fabs(cast(float)pt.y) / 10.0 + 0.5);
     lf.lfWidth          = 0;
     lf.lfEscapement     = 0;
     lf.lfOrientation    = 0;
@@ -98,7 +98,7 @@ HFONT EzCreateFont(HDC hdc, string szFaceName, int iDeciPtHeight,
         DeleteObject(SelectObject(hdc, hFont));
 
         lf.lfWidth = cast(int)(tm.tmAveCharWidth *
-                           fabs(pt.x) / fabs(pt.y) + 0.5);
+                           fabs(cast(float)pt.x) / fabs(cast(float)pt.y) + 0.5);
 
         hFont = CreateFontIndirect(&lf);
     }
