@@ -190,7 +190,10 @@ HMENU  hMenuInitWindow, hMenuHelloWindow, hMenuRectWindow;
 
 extern (Windows)
 LRESULT FrameWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+    nothrow
 {
+    scope (failure) assert(0);
+
     static HWND hwndClient;
     CLIENTCREATESTRUCT clientcreate;
     HWND hwndChild;
@@ -317,8 +320,10 @@ LRESULT FrameWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 extern (Windows)
-BOOL CloseEnumProc(HWND hwnd, LPARAM lParam)
+BOOL CloseEnumProc(HWND hwnd, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
+
     if (GetWindow(hwnd, GW_OWNER))           // Check for icon title
         return TRUE;
 
@@ -333,8 +338,10 @@ BOOL CloseEnumProc(HWND hwnd, LPARAM lParam)
 
 extern (Windows)
 LRESULT HelloWndProc(HWND hwnd, UINT message,
-                     WPARAM wParam, LPARAM lParam)
+                     WPARAM wParam, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
+
     auto clrTextArray = [RGB(0,   0, 0), RGB(255, 0,   0),
                          RGB(0, 255, 0), RGB(  0, 0, 255),
                          RGB(255, 255, 255)];
@@ -459,8 +466,9 @@ LRESULT HelloWndProc(HWND hwnd, UINT message,
 
 extern (Windows)
 LRESULT RectWndProc(HWND hwnd, UINT message,
-                    WPARAM wParam, LPARAM lParam)
+                    WPARAM wParam, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
     static HWND hwndClient, hwndFrame;
     HBRUSH hBrush;
     HDC hdc;
