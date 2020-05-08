@@ -9,11 +9,10 @@ This project has been created by Andrej Mitrovic.
 Project Homepage: https://github.com/AndrejMitrovic/DWinProgramming
 
 ## Building Requirements
-- Windows XP or newer.
-- Compiler: [DMD] v2.065 or [GDC] 2.065.
+- Windows 7 or newer.
+- Compiler: [DMD] v2.091. Other compilers (ldc, gdc) will be supported soon.
 
-[DMD]: http://dlang.org/download.html
-[GDC]: http://gdcproject.org/downloads/
+[DMD]: https://dlang.org/download.html
 
 ## Building
 
@@ -25,32 +24,21 @@ And then to build all samples via DMD call:
 
     $ build.exe
 
-Alternatively to build all the samples via GDC call:
-
-    $ build.exe GDC
-
-    Note: Building all samples is quite slow with GDC at the moment.
-
 To build only a single example, CD to its directory and run:
 
     $ ..\..\..\build.exe filename.d (filename being the main file)
 
 Other options are: clean, debug.
 
-## Useful Scripts
-- Use `dbg.bat` to quickly invoke the ddbg debugger on an executable. ('dbg main.exe')
-- Use `gdmd.bat` to invoke the GDMD perl script. ('gdmd main.d -ofmain.exe')
-- Use `where.bat` to find out the location of an exe/batch file. ('where dmd')
-
 ## Optional Tools
-- HTOD: http://www.digitalmars.com/d/2.0/htod.html
+- HTOD: https://www.digitalmars.com/d/2.0/htod.html
     HTOD needs to be in your PATH. It's probably best to put it in the \DMD2\Windows\Bin
     directory.
 
 - Microsoft RC compiler and header files. Without these the build script will use
   precompiled .res files.
     - Unless you have Visual Studio installed, get it from:
-    http://www.microsoft.com/downloads/en/details.aspx?FamilyID=c17ba869-9671-4330-a63e-1fd44e0e2505&displaylang=en
+    https://www.microsoft.com/downloads/en/details.aspx?FamilyID=c17ba869-9671-4330-a63e-1fd44e0e2505&displaylang=en
     - RC needs to be in your PATH if you want to compile resources. If you have Visual Studio installed, you can use the Visual Studio Command Prompt.
 
     Note: This is a big download, depending on what you select in the setup.
@@ -83,8 +71,6 @@ any bugs in these samples are entirely my fault.
 File bugs here: https://github.com/AndrejMitrovic/DWinProgramming/issues
 
 ## Acknowledgments
-Thanks to the authors of the WindowsAPI translation project:
-http://dsource.org/projects/bindings/wiki/WindowsApi
 
 Big Thanks to Charles Petzold for writing a great Windows API programming book and
 for allowing me to host these code samples online.
@@ -98,57 +84,57 @@ Thanks goes out to all contributors.
 ## Licensing
 All code examples copyright belongs to Charles Petzold.
 Also see the answer to the 3rd question here:
-http://www.charlespetzold.com/faq.html
+https://www.charlespetzold.com/faq.html
 
 ## Links
-D2 Programming Language Homepage: http://d-programming-language.org/
+D2 Programming Language Homepage: https://dlang.org
 
 Code samples of using Win32 API and Cairo: https://github.com/AndrejMitrovic/cairoDSamples
 
-How to make extensionless files open in your editor in WinXP: http://perishablepress.com/press/2006/08/08/associate-extensionless-files-with-notepad/
+How to make extensionless files open in your editor in WinXP: https://perishablepress.com/press/2006/08/08/associate-extensionless-files-with-notepad/
     Note: Also, make sure you hit the 'Open with' button and select your editor.
 
 How to make extensionless files open in your editor in Windows 7 and Windows 8 (and probably XP):
 Run this in the command prompt:
     assoc .="No Extension"
     ftype "No Extension"="C:\path\to\your editor.exe" "%1"
-Also see http://superuser.com/a/13947/47065
+Also see https://superuser.com/a/13947/47065
 
-Programming Windows Homepage: http://www.charlespetzold.com/pw5/
+Programming Windows Homepage: https://www.charlespetzold.com/pw5/
 
-Programming Windows C Code Samples: http://www.charlespetzold.com/books.html
+Programming Windows C Code Samples: https://www.charlespetzold.com/books.html
 (search for ProgWin5.zip)
 
-Charles Petzold FAQ: http://www.charlespetzold.com/faq.html
+Charles Petzold FAQ: https://www.charlespetzold.com/faq.html
 
-Programming Windows Errata #1: http://www.computersciencelab.com/PetzoldErrata.htm
+Programming Windows Errata #1: https://www.computersciencelab.com/PetzoldErrata.htm
 
-Programming Windows Errata #2: http://www.jasondoucette.com/books/pw5/pw5errata.html
+Programming Windows Errata #2: https://www.jasondoucette.com/books/pw5/pw5errata.html
 
-MSDN GDI page: http://msdn.microsoft.com/en-us/library/dd145203%28v=vs.85%29.aspx
+MSDN GDI page: https://msdn.microsoft.com/en-us/library/dd145203%28v=vs.85%29.aspx
 
-MSDN list of Windows APIs: http://msdn.microsoft.com/en-us/library/ff818516.aspx
+MSDN list of Windows APIs: https://msdn.microsoft.com/en-us/library/ff818516.aspx
 
-Windows API bindings: http://dsource.org/projects/bindings/wiki/WindowsApi
+Windows API bindings: https://dsource.org/projects/bindings/wiki/WindowsApi
 
-RDMD: http://www.digitalmars.com/d/2.0/rdmd.html
+RDMD: https://www.digitalmars.com/d/2.0/rdmd.html
 
 RDMD@github: https://github.com/D-Programming-Language/tools
 
-HTOD: http://www.digitalmars.com/d/2.0/htod.html
+HTOD: https://www.digitalmars.com/d/2.0/htod.html
 
-DDBG D Debugger: http://ddbg.mainia.de/doc.html
+DDBG D Debugger: https://ddbg.mainia.de/doc.html
 
-Uncrustify - Code Beautifier: http://sourceforge.net/projects/uncrustify/develop
+Uncrustify - Code Beautifier: https://sourceforge.net/projects/uncrustify/develop
 
 UniversalIndentGUI - GUI Frontend for Code Beautifiers:
 
-http://universalindent.sourceforge.net/
+https://universalindent.sourceforge.net/
 
-Using Resources in D Tutorial: http://prowiki.org/wiki4d/wiki.cgi?D__Tutorial/WindowsResources
+Using Resources in D Tutorial: https://prowiki.org/wiki4d/wiki.cgi?D__Tutorial/WindowsResources
 
-Unicode Character Viewer: http://rishida.net/scripts/uniview/
+Unicode Character Viewer: https://rishida.net/scripts/uniview/
 
-Environment Variables: http://www.computerhope.com/issues/ch000549.htm
+Environment Variables: https://www.computerhope.com/issues/ch000549.htm
 
-Environment Editor: http://www.rapidee.com/
+Environment Editor: https://www.rapidee.com/
