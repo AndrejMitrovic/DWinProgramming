@@ -8,6 +8,7 @@ module KBMidi;
 import core.memory;
 import core.runtime;
 import core.thread;
+import std.algorithm : max, min;
 import std.conv;
 import std.math;
 import std.range;
