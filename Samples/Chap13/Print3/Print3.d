@@ -173,8 +173,10 @@ void PageGDICalls(HDC hdcPrn, int cxPage, int cyPage)
 }
 
 extern (Windows)
-LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
+
     static int cxClient, cyClient;
     HDC hdc;
     HMENU hMenu;

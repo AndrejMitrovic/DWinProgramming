@@ -8,6 +8,7 @@ module KBMidi;
 import core.memory;
 import core.runtime;
 import core.thread;
+import std.algorithm : max, min;
 import std.conv;
 import std.math;
 import std.range;
@@ -519,8 +520,10 @@ VOID ProcessKey(HDC hdc, UINT message, LPARAM lParam)
 }
 
 extern (Windows)
-LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
+
     static BOOL bOpened = FALSE;
     HDC hdc;
     HMENU hMenu;

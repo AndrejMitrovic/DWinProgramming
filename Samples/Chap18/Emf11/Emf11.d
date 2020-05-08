@@ -259,8 +259,10 @@ BOOL PrintRoutine(HWND hwnd)
 }
 
 extern (Windows)
-LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
+
     BOOL bSuccess;
     static int cxClient, cyClient;
     HDC hdc;

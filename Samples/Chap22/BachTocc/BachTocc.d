@@ -114,8 +114,10 @@ DWORD MidiOutMessage(HMIDIOUT hMidi, int iStatus, int iChannel, int iData1, int 
 }
 
 extern (Windows)
-LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
+
     struct NoteSeq
     {
         int iDur;

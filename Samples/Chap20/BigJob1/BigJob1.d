@@ -142,8 +142,10 @@ void ThreadFunc()
 }
 
 extern (Windows)
-LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
+
     static INT  iStatus;
     static LONG lTime;
     static string[] szMessage = ["Ready (left mouse button begins)",

@@ -135,8 +135,10 @@ WNDPROC[3] SubbedProc;
 HWND hwndFocus;
 
 extern (Windows)
-LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
+
     static HWND hwndDTP, hwndCheck, hwndPush;
     static WAVEFORM waveform = WAVEFORM("RIFF", NUMSAMPS + 0x24, "WAVE", "fmt ",
                                   PCMWAVEFORMAT.sizeof, PCMWAVEFORMAT(WAVEFORMAT(1, 1, SAMPRATE,

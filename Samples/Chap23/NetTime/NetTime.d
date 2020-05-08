@@ -135,8 +135,10 @@ enum WM_SOCKET_NOTIFY = (WM_USER + 1);
 enum ID_TIMER         = 1;
 
 extern (Windows)
-LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
+
     switch (message)
     {
         case WM_SETFOCUS:

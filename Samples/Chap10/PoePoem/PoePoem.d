@@ -13,6 +13,7 @@ module PoePoem;
 
 import core.runtime;
 import core.thread;
+import std.algorithm : max, min;
 import std.conv;
 import std.math;
 import std.range;
@@ -111,8 +112,10 @@ int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int
 }
 
 extern (Windows)
-LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
+
     static string  pText;
     static HGLOBAL hResource;
     static HWND hScroll;

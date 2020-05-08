@@ -8,6 +8,7 @@ module PickFont;
 import core.memory;
 import core.runtime;
 import core.thread;
+import std.algorithm : max, min;
 import std.conv;
 import std.math;
 import std.range;
@@ -121,8 +122,10 @@ enum BCHARFORM = "0x%04X";
 HWND hdlg;
 
 extern (Windows)
-LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
+
     static DLGPARAMS dp;
     dstring szText = "ABCDE abcde ÀÁÂÃÄÅ àáâãäå";
     HDC hdc;
