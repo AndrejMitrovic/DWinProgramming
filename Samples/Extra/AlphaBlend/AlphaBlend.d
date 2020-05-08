@@ -47,9 +47,9 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int i
 
     try
     {
-        Runtime.initialize(&exceptionHandler);
+        Runtime.initialize();
         result = myWinMain(hInstance, hPrevInstance, lpCmdLine, iCmdShow);
-        Runtime.terminate(&exceptionHandler);
+        Runtime.terminate();
     }
     catch (Throwable o)
     {

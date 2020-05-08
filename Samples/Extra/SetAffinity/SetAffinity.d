@@ -91,13 +91,12 @@ extern (Windows)
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int iCmdShow)
 {
     int result;
-    void exceptionHandler(Throwable e) { throw e; }
 
     try
     {
-        Runtime.initialize(&exceptionHandler);
+        Runtime.initialize();
         myMain();
-        Runtime.terminate(&exceptionHandler);
+        Runtime.terminate();
     }
     catch (Throwable o)
     {
