@@ -4,12 +4,12 @@ import std.algorithm;
 import std.range;
 import std.string;
 
-import win32.objidl;
-import win32.ole2;
-import win32.winbase;
-import win32.windef;
-import win32.winuser;
-import win32.wtypes;
+import core.sys.windows.objidl;
+import core.sys.windows.ole2;
+import core.sys.windows.winbase;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wtypes;
 
 import utils.com;
 

@@ -22,11 +22,11 @@ auto toUTF16z(S)(S s)
 
 pragma(lib, "gdi32.lib");
 pragma(lib, "comdlg32.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.commdlg;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
 
 import resource;
 
@@ -144,10 +144,10 @@ void DrawRuler(HDC hdc, int cx, int cy)
 
     // Create logical font
     lf.lfHeight = cy / 2;
-    
+
     lf.lfFaceName = 0;
     auto szFaceName = "Times New Roman\0";
-    lf.lfFaceName[0..szFaceName.length] = szFaceName.toUTF16;    
+    lf.lfFaceName[0..szFaceName.length] = szFaceName.toUTF16;
 
     SelectObject(hdc, CreateFontIndirect(&lf));
     SetTextAlign(hdc, TA_BOTTOM | TA_CENTER);

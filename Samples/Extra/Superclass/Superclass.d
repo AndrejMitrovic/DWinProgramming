@@ -12,11 +12,11 @@ import std.range;
 import std.string;
 import std.utf;
 
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.commdlg;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
 pragma(lib, "comdlg32.lib");
 
 import std.algorithm;
@@ -51,7 +51,7 @@ import std.traits;
 // =============================================================================
 // Demonstrates window superclassing. An edit control is superclassed to give
 // extra functionality in the form of an additional button that enables font
-// changes to be made. 
+// changes to be made.
 // =============================================================================
 
 auto toUTF16z(S) (S s)
@@ -183,7 +183,7 @@ LRESULT WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         default:
     }
-    
+
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
@@ -236,7 +236,7 @@ LRESULT EditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         default:
     }
-    
+
     return CallWindowProc(wpOldProc, hwnd, uMsg, wParam, lParam);
 }
 
@@ -276,7 +276,7 @@ int OnCreateEdit(HWND hwnd, CREATESTRUCT* cs)
                                0, 0, 10, 10,
                                hwnd,
                                null,
-                               cs.hInstance, 
+                               cs.hInstance,
                                null);
 
     // if winxp themes are used the button will be obscured so turn off themes for

@@ -2,8 +2,8 @@ module EdrLib;
 
 pragma(lib, "gdi32.lib");
 pragma(lib, "comdlg32.lib");
-import win32.windef;
-import win32.wingdi;
+import core.sys.windows.windef;
+import core.sys.windows.wingdi;
 import std.utf : count, toUTFz;
 
 auto toUTF16z(S)(S s)

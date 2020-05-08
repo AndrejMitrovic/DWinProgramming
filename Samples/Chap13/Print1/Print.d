@@ -21,11 +21,11 @@ auto toUTF16z(S)(S s)
 
 pragma(lib, "gdi32.lib");
 pragma(lib, "winspool.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.winspool;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.winspool;
 
 string appName     = "Print1";
 string description = "Print Program 1";
@@ -153,7 +153,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             if (wParam == 1)
             {
                 if (!PrintMyPage(hwnd))
-                    MessageBox(hwnd, "Could not print page!", 
+                    MessageBox(hwnd, "Could not print page!",
                                appName.toUTF16z, MB_OK | MB_ICONEXCLAMATION);
 
                 return 0;
@@ -172,7 +172,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_DESTROY:
             PostQuitMessage(0);
             return 0;
-        
+
         default:
     }
 
@@ -189,7 +189,7 @@ bool PrintMyPage(HWND hwnd)
     hdcPrn = GetPrinterDC();
     if (hdcPrn is null)
         return false;
-    
+
     scope(exit) DeleteDC(hdcPrn);
 
     xPage = GetDeviceCaps(hdcPrn, HORZRES);
@@ -209,7 +209,7 @@ bool PrintMyPage(HWND hwnd)
     }
     else
         bSuccess = false;
-    
+
     return bSuccess;
 }
 

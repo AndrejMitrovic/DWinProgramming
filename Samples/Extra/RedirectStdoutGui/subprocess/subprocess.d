@@ -17,10 +17,10 @@ auto toUTF16z(S)(S s)
 pragma(lib, "gdi32.lib");
 pragma(lib, "winmm.lib");
 
-import win32.mmsystem;
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
+import core.sys.windows.mmsystem;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
 
 extern(Windows)
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int iCmdShow)
@@ -113,7 +113,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             writefln("Captured string #%s", i++);
             stdout.flush();
             return 0;
-        }        
+        }
 
         case WM_PAINT:
             hdc = BeginPaint(hwnd, &ps);

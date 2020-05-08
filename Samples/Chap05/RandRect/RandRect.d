@@ -19,9 +19,9 @@ import std.random;
 
 pragma(lib, "gdi32.lib");
 
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
 
 extern (Windows)
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int iCmdShow)
@@ -139,8 +139,8 @@ void DrawRectangle(HWND hwnd)
     SetRect (&rect, uniform(0, cxClient), uniform(0, cyClient),
                     uniform(0, cxClient), uniform(0, cyClient));
 
-    hBrush = CreateSolidBrush(RGB(cast(byte)uniform(0, 256), 
-                                  cast(byte)uniform(0, 256), 
+    hBrush = CreateSolidBrush(RGB(cast(byte)uniform(0, 256),
+                                  cast(byte)uniform(0, 256),
                                   cast(byte)uniform(0, 256)));
 
     hdc = GetDC(hwnd);

@@ -21,11 +21,11 @@ auto toUTF16z(S)(S s)
 
 pragma(lib, "gdi32.lib");
 pragma(lib, "comdlg32.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.commdlg;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
 
 import resource;
 
@@ -249,7 +249,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                     }
 
                     return 0;
-                    
+
                 default:
             }
 
@@ -280,7 +280,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
             PostQuitMessage(0);
             return 0;
-            
+
         default:
     }
 

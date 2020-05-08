@@ -21,11 +21,11 @@ auto toUTF16z(S)(S s)
 
 pragma(lib, "gdi32.lib");
 pragma(lib, "winspool.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.winspool;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.winspool;
 
 string appName     = "Print2";
 string description = "Print Program 2";
@@ -211,7 +211,7 @@ bool PrintMyPage(HWND hwnd)
     yPage = GetDeviceCaps(hdcPrn, VERTRES);
 
     EnableWindow(hwnd, FALSE);
-    
+
     // @BUG@ WindowsAPI callbacks are not defined properly:
     //     alias BOOL function(HDC, int) ABORTPROC;
     //

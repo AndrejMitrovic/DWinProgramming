@@ -20,9 +20,9 @@ auto toUTF16z(S)(S s)
 }
 
 pragma(lib, "gdi32.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
 
 struct SysMetrics
 {
@@ -416,7 +416,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
             return 0;
         }
-        
+
         case WM_PAINT:
         {
             hdc = BeginPaint(hwnd, &ps);

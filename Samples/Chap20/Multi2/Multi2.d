@@ -24,12 +24,12 @@ auto toUTF16z(S)(S s)
 pragma(lib, "gdi32.lib");
 pragma(lib, "comdlg32.lib");
 pragma(lib, "winmm.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.commdlg;
-import win32.mmsystem;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
+import core.sys.windows.mmsystem;
 
 alias win32.winuser.MessageBox MessageBox;
 
@@ -183,7 +183,7 @@ LRESULT WndProc1(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_DESTROY:
             params1.bKill = TRUE;
             return 0;
-        
+
         default:
     }
 
@@ -245,7 +245,7 @@ LRESULT WndProc2(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_DESTROY:
             params2.bKill = TRUE;
             return 0;
-        
+
         default:
     }
 
@@ -274,7 +274,7 @@ void Thread3()
         hdc = GetDC(params3.hwnd);
 
         szBuffer = format("%s", iNum);
-        TextOut(hdc, 0, iLine * params3.cyChar, szBuffer.toUTF16z, szBuffer.count);        
+        TextOut(hdc, 0, iLine * params3.cyChar, szBuffer.toUTF16z, szBuffer.count);
 
         ReleaseDC(params3.hwnd, hdc);
         iTemp  = iNum;
@@ -302,7 +302,7 @@ LRESULT WndProc3(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_DESTROY:
             params3.bKill = TRUE;
             return 0;
-        
+
         default:
     }
 
@@ -354,7 +354,7 @@ LRESULT WndProc4(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_DESTROY:
             params4.bKill = TRUE;
             return 0;
-        
+
         default:
     }
 
@@ -424,7 +424,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_DESTROY:
             PostQuitMessage(0);
             return 0;
-        
+
         default:
     }
 

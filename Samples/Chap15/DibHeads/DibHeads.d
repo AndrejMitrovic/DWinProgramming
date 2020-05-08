@@ -22,11 +22,11 @@ auto toUTF16z(S)(S s)
 
 pragma(lib, "gdi32.lib");
 pragma(lib, "comdlg32.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.commdlg;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
 
 import resource;
 
@@ -119,8 +119,8 @@ void hwndPrint(A, B, C...)(A hwnd, B szFormat, C values)
 
     SendMessage (hwnd, EM_SETSEL, cast(WPARAM) -1, cast(LPARAM) -1);
     SendMessage (hwnd, EM_REPLACESEL, FALSE, cast(LPARAM)szBuffer.toUTF16z);
-    SendMessage (hwnd, EM_SCROLLCARET, 0, 0);            
-    
+    SendMessage (hwnd, EM_SCROLLCARET, 0, 0);
+
 }
 
 void DisplayDibHeaders(HWND hwnd, string szFileName)
@@ -129,7 +129,7 @@ void DisplayDibHeaders(HWND hwnd, string szFileName)
                                   "BITMAPINFOHEADER",
                                   "BITMAPV4HEADER",
                                   "BITMAPV5HEADER"];
-    
+
     static string[] szCompression = ["BI_RGB", "BI_RLE8",
                                       "BI_RLE4",
                                       "BI_BITFIELDS",
@@ -216,22 +216,22 @@ void DisplayDibHeaders(HWND hwnd, string szFileName)
     switch (pbmih.bV5Size)
     {
         case BITMAPCOREHEADER.sizeof:
-            i = 0;                       
+            i = 0;
             break;
 
         case BITMAPINFOHEADER.sizeof:
-            i = 1;  
-            szV = "i"w.dup.ptr;  
+            i = 1;
+            szV = "i"w.dup.ptr;
             break;
 
         case BITMAPV4HEADER.sizeof:
-            i = 2;  
-            szV = "V4"w.dup.ptr;  
+            i = 2;
+            szV = "V4"w.dup.ptr;
             break;
 
         case BITMAPV5HEADER.sizeof:
-            i = 3;  
-            szV = "V5"w.dup.ptr;  
+            i = 3;
+            szV = "V5"w.dup.ptr;
             break;
 
         default:
@@ -403,7 +403,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                         DisplayDibHeaders(hwndEdit, to!string(szFileName[]));
 
                     return 0;
-                    
+
                 default:
             }
 
@@ -412,7 +412,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_DESTROY:
             PostQuitMessage(0);
             return 0;
-        
+
         default:
     }
 

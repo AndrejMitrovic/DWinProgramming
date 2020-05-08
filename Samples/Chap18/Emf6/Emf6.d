@@ -21,11 +21,11 @@ auto toUTF16z(S)(S s)
 
 pragma(lib, "gdi32.lib");
 pragma(lib, "comdlg32.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.commdlg;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
 
 string appName     = "EMF6";
 string description = "Enhanced Metafile Demo #6";
@@ -110,9 +110,9 @@ int EnhMetaFileProc(HDC hdc, HANDLETABLE* pHandleTable,
 {
     ENHMETARECORD* pEmfr;
     immutable newlength = pEmfRecord.nSize;
-    
+
     pEmfr = cast(ENHMETARECORD*)GC.malloc(newlength);
-    
+
     memcpy(pEmfr, pEmfRecord, newlength);
 
     if (pEmfr.iType == EMR_RECTANGLE)
@@ -149,7 +149,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             //     alias int function(HANDLE, HANDLETABLE*, const(ENHMETARECORD)*, int, int)
             //
             // should be:
-            //     alias extern(Windows) int function(HANDLE hdc, HANDLETABLE* pHandleTable, ENHMETARECORD* pEmfRecord, int iHandles, int pData)            
+            //     alias extern(Windows) int function(HANDLE hdc, HANDLETABLE* pHandleTable, ENHMETARECORD* pEmfRecord, int iHandles, int pData)
             EnumEnhMetaFile(hdc, hemf, cast(int function(HANDLE, HANDLETABLE*, const(ENHMETARECORD)*, int, int))&EnhMetaFileProc, NULL, &rect);
             DeleteEnhMetaFile(hemf);
             EndPaint(hwnd, &ps);
@@ -158,7 +158,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_DESTROY:
             PostQuitMessage(0);
             return 0;
-        
+
         default:
     }
 

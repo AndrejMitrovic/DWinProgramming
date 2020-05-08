@@ -7,13 +7,13 @@
  + Demonstrates a simple double-buffer drawing mechanism.
  + Basically you do all the drawing in a backbuffer and
  + then blit that to the screen when you're done.
- + 
+ +
  + Some good info about avoiding flicker can be found here:
  + http://www.catch22.net/tuts/flicker
- + 
+ +
  + Also see various codeproject.com C/C++ helper libraries
  + and articles that have anti-flicker code.
- + 
+ +
  + Note that scrollbars and titlebars still flicker,
  + but this could also be fixed. Search online to figure
  + this stuff out.
@@ -37,10 +37,10 @@ auto toUTF16z(S)(S s)
 
 pragma(lib, "gdi32.lib");
 
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
 
 string appName     = "BackBuffer";
 string description = "BackBuffer Demo";
@@ -82,10 +82,10 @@ int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int
     wndclass.hInstance     = hInstance;
     wndclass.hIcon         = LoadIcon(NULL, IDI_APPLICATION);
     wndclass.hCursor       = LoadCursor(NULL, IDC_ARROW);
-    
+
     //~ wndclass.hbrBackground = cast(HBRUSH) GetStockObject(WHITE_BRUSH);
     wndclass.hbrBackground = null;  // don't send WM_ERASEBKND messages
-    
+
     wndclass.lpszMenuName  = appName.toUTF16z;
     wndclass.lpszClassName = appName.toUTF16z;
 
@@ -131,7 +131,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     static HBITMAP hbmMem;
     static HANDLE  hOld;
     RECT rect;
-    
+
     switch (message)
     {
         case WM_SIZE:
@@ -143,7 +143,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         // the WM_ERASEBKND message to be sent.
         case WM_ERASEBKGND:
             return 1;
-        
+
         case WM_PAINT:
         {
             // Get DC for window
@@ -153,11 +153,11 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             hdcMem = CreateCompatibleDC(hdc);
             hbmMem = CreateCompatibleBitmap(hdc, cxClient, cyClient);
             hOld = SelectObject(hdcMem, hbmMem);
-        
+
             // Draw into hdcMem
             GetClientRect(hwnd, &rect);
             FillRect(hdcMem, &rect, GetStockObject(BLACK_BRUSH));
-            
+
             rect.left += 10;
             rect.top  += 10;
             rect.right -= 10;
@@ -175,7 +175,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             EndPaint(hwnd, &ps);
             return 0;
         }
-        
+
         case WM_DESTROY:
             PostQuitMessage(0);
             return 0;

@@ -4,10 +4,10 @@ import core.atomic;
 import core.memory;
 import core.stdc.string;
 
-import win32.objidl;
-import win32.ole2;
-import win32.winbase;
-import win32.windef;
+import core.sys.windows.objidl;
+import core.sys.windows.ole2;
+import core.sys.windows.winbase;
+import core.sys.windows.windef;
 
 /**
     Create a global memory buffer and store text contents to it.

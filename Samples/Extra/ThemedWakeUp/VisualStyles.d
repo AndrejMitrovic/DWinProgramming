@@ -2,7 +2,7 @@
  + Taken from DFL. See license.txt
  + DFL is Copyright (C) 2004-2010 Christopher E. Miller
  + Official DFL website: http://www.dprogramming.com/dfl.php
- + 
+ +
  + Init function for visual styles.
  +/
 
@@ -21,12 +21,12 @@ import std.stdio;
 
 pragma(lib, "gdi32.lib");
 
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.aclapi;
-import win32.commctrl;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.aclapi;
+import core.sys.windows.commctrl;
 pragma(lib, "comctl32.lib");
 pragma(lib, "advapi32.lib");
 

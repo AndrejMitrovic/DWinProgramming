@@ -21,11 +21,11 @@ auto toUTF16z(S)(S s)
 
 pragma(lib, "gdi32.lib");
 pragma(lib, "comdlg32.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.commdlg;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
 
 import resource;
 
@@ -153,7 +153,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                     CheckMenuItem(GetMenu(hwnd), dp.iDevice, MF_CHECKED);
                     SendMessage(hwnd, WM_COMMAND, IDOK, 0);
                     return 0;
-                
+
                 default:
             }
 
@@ -189,7 +189,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_DESTROY:
             PostQuitMessage(0);
             return 0;
-        
+
         default:
     }
 
@@ -230,10 +230,10 @@ BOOL DlgProc(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam)
                              IDC_MM_TEXT);
 
             SendMessage(hdlg, WM_COMMAND, IDOK, 0);
-            
+
             goto case;
-        
-        
+
+
         case WM_SETFOCUS:
             SetFocus(GetDlgItem(hdlg, IDC_LF_HEIGHT));
             return FALSE;
@@ -433,12 +433,12 @@ BOOL DlgProc(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam)
                     SetFieldsFromTextMetric(hdlg, pdp);
                     InvalidateRect(GetParent(hdlg), NULL, TRUE);
                     return TRUE;
-                    
+
                 default:
             }
 
             break;
-            
+
         default:
     }
 
@@ -524,27 +524,27 @@ void MySetMapMode(HDC hdc, int iMapMode)
     switch (iMapMode)
     {
         case IDC_MM_TEXT:
-            SetMapMode(hdc, MM_TEXT);       
+            SetMapMode(hdc, MM_TEXT);
             break;
 
         case IDC_MM_LOMETRIC:
-            SetMapMode(hdc, MM_LOMETRIC);   
+            SetMapMode(hdc, MM_LOMETRIC);
             break;
 
         case IDC_MM_HIMETRIC:
-            SetMapMode(hdc, MM_HIMETRIC);   
+            SetMapMode(hdc, MM_HIMETRIC);
             break;
 
         case IDC_MM_LOENGLISH:
-            SetMapMode(hdc, MM_LOENGLISH);  
+            SetMapMode(hdc, MM_LOENGLISH);
             break;
 
         case IDC_MM_HIENGLISH:
-            SetMapMode(hdc, MM_HIENGLISH);  
+            SetMapMode(hdc, MM_HIENGLISH);
             break;
 
         case IDC_MM_TWIPS:
-            SetMapMode(hdc, MM_TWIPS);      
+            SetMapMode(hdc, MM_TWIPS);
             break;
 
         case IDC_MM_LOGTWIPS:
@@ -553,7 +553,7 @@ void MySetMapMode(HDC hdc, int iMapMode)
             SetViewportExtEx(hdc, GetDeviceCaps(hdc, LOGPIXELSX),
                              GetDeviceCaps(hdc, LOGPIXELSY), NULL);
             break;
-        
+
         default:
     }
 }

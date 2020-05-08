@@ -22,12 +22,12 @@ auto toUTF16z(S)(S s)
 pragma(lib, "gdi32.lib");
 pragma(lib, "comdlg32.lib");
 pragma(lib, "winmm.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.commdlg;
-import win32.mmsystem;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
+import core.sys.windows.mmsystem;
 
 import resource;
 
@@ -152,7 +152,7 @@ BOOL DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                 case SB_BOTTOM:
                     GetScrollRange(hwndScroll, SB_CTL, &iDummy, &iFreq);
                     break;
-                
+
                 default:
             }
 
@@ -232,7 +232,7 @@ BOOL DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                     }
 
                     return TRUE;
-                    
+
                 default:
             }
 
@@ -270,7 +270,7 @@ BOOL DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             SetDlgItemText(hwnd, IDC_ONOFF, "Turn On");
 
             hWaveOut = cast(typeof(hWaveOut))NULL;
-        
+
             if (bClosing)
                 EndDialog(hwnd, 0);
 
@@ -293,12 +293,12 @@ BOOL DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                         EndDialog(hwnd, 0);
 
                     return TRUE;
-                    
+
                 default:
             }
 
             break;
-            
+
         default:
     }
 

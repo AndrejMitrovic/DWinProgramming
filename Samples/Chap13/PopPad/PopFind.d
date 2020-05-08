@@ -23,12 +23,12 @@ pragma(lib, "gdi32.lib");
 pragma(lib, "comdlg32.lib");
 pragma(lib, "winmm.lib");
 pragma(lib, "advapi32.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.commdlg;
-import win32.mmsystem;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
+import core.sys.windows.mmsystem;
 
 enum MAX_STRING_LEN = 256;
 
@@ -102,7 +102,7 @@ BOOL PopFindFindText(HWND hwndEdit, int* piSearchOffset, LPFINDREPLACE pfr)
     auto needle = fromWStringz(pfr.lpstrFindWhat);
     auto str = pstrDoc[0..iLength];
     auto pos = str[*piSearchOffset..$].indexOf(needle);
-        
+
     // Return an error code if the string cannot be found
     if (pos == -1) return FALSE;
 

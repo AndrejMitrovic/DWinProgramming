@@ -23,12 +23,12 @@ auto toUTF16z(S)(S s)
 pragma(lib, "gdi32.lib");
 pragma(lib, "comdlg32.lib");
 pragma(lib, "winmm.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.commdlg;
-import win32.mmsystem;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
+import core.sys.windows.mmsystem;
 
 alias win32.winuser.MessageBox MessageBox;
 
@@ -203,7 +203,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_DESTROY:
             PostQuitMessage(0);
             return 0;
-        
+
         default:
     }
 

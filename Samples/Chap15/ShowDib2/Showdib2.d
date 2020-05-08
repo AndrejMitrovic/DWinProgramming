@@ -21,11 +21,11 @@ auto toUTF16z(S)(S s)
 
 pragma(lib, "gdi32.lib");
 pragma(lib, "comdlg32.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.commdlg;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
 
 import resource;
 import DibFile;
@@ -139,7 +139,7 @@ int ShowDib(HDC hdc, BITMAPINFO* pbmi, BYTE* pBits, int cxDib, int cyDib,
             return StretchDIBits(hdc, 0, 0, cxDib, cyDib,
                                  0, 0, cxDib, cyDib,
                                  pBits, pbmi, DIB_RGB_COLORS, SRCCOPY);
-        
+
         default:
     }
 
@@ -347,11 +347,11 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                     // Make a copy of the packed DIB
                     hGlobal = GlobalAlloc(GHND | GMEM_SHARE, pbmfh.bfSize - BITMAPFILEHEADER.sizeof);
                     pGlobal = cast(typeof(pGlobal))GlobalLock(hGlobal);
-                    
+
                     auto newlength = pbmfh.bfSize - BITMAPFILEHEADER.sizeof;
                     pGlobal[0..newlength] = (cast(BYTE*)pbmfh + BITMAPFILEHEADER.sizeof)[0..newlength];
-                    GlobalUnlock(hGlobal);;                    
-                    
+                    GlobalUnlock(hGlobal);;
+
                     // Transfer it to the clipboard
                     OpenClipboard(hwnd);
                     EmptyClipboard();
@@ -362,7 +362,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                         return 0;
 
                     goto case IDM_EDIT_DELETE;
-                    
+
                 case IDM_EDIT_DELETE:
 
                     if (pbmfh)
@@ -383,7 +383,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                     CheckMenuItem(hMenu, wShow, MF_CHECKED);
                     InvalidateRect(hwnd, NULL, TRUE);
                     return 0;
-                
+
                 default:
             }
 
@@ -406,7 +406,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
             PostQuitMessage(0);
             return 0;
-            
+
         default:
     }
 

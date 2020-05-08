@@ -22,12 +22,12 @@ auto toUTF16z(S)(S s)
 pragma(lib, "gdi32.lib");
 pragma(lib, "comdlg32.lib");
 pragma(lib, "winmm.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.commdlg;
-import win32.mmsystem;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
+import core.sys.windows.mmsystem;
 
 import resource;
 
@@ -95,7 +95,7 @@ BOOL DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             return FALSE;
 
         case WM_COMMAND:
-            
+
             switch (LOWORD(wParam))
             {
                 case IDOK:
@@ -156,7 +156,7 @@ BOOL DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                     }
 
                     break;
-                    
+
                 default:
             }
 
@@ -202,12 +202,12 @@ BOOL DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                 case SC_CLOSE:
                     EndDialog(hwnd, 0);
                     return TRUE;
-                
+
                 default:
             }
 
             break;
-            
+
         default:
     }
 

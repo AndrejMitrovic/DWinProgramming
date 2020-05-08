@@ -21,11 +21,11 @@ auto toUTF16z(S)(S s)
 
 pragma(lib, "gdi32.lib");
 pragma(lib, "comdlg32.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.commdlg;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
 
 import EZFont;
 import resource;
@@ -115,7 +115,7 @@ void PaintRoutine(HWND hwnd, HDC hdc, int cxArea, int cyArea)
     // Set Logical Twips mapping mode
     SetMapMode(hdc, MM_ANISOTROPIC);
     SetWindowExtEx(hdc, 1440, 1440, NULL);
-    
+
     SetViewportExtEx(hdc, GetDeviceCaps(hdc, LOGPIXELSX), GetDeviceCaps(hdc, LOGPIXELSY), NULL);
 
     for (iPointSize = 80; iPointSize <= 120; iPointSize++)

@@ -23,11 +23,11 @@ import resource;
 
 pragma(lib, "gdi32.lib");
 pragma(lib, "winspool.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.winspool;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.winspool;
 
 string appName     = "Print3";
 string description = "Print Program 3 (Dialog Box)";
@@ -251,7 +251,7 @@ bool PrintMyPage(HWND hwnd)
     //     alias BOOL function(HDC, int) ABORTPROC;
     //
     // should be:
-    //     alias extern(Windows) BOOL function(HDC, int) ABORTPROC;    
+    //     alias extern(Windows) BOOL function(HDC, int) ABORTPROC;
     SetAbortProc(hdcPrn, cast(BOOL function(HDC, int))&AbortProc);
 
     if (StartDoc(hdcPrn, &di) > 0)

@@ -22,12 +22,12 @@ auto toUTF16z(S)(S s)
 pragma(lib, "gdi32.lib");
 pragma(lib, "comdlg32.lib");
 pragma(lib, "winmm.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.commdlg;
-import win32.mmsystem;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
+import core.sys.windows.mmsystem;
 
 import resource;
 
@@ -49,7 +49,7 @@ BOOL PrintDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
             DestroyWindow(hDlg);
             hDlgPrint = NULL;
             return TRUE;
-        
+
         default:
     }
 
@@ -91,7 +91,7 @@ BOOL PopPrntPrintFile(HINSTANCE hInst, HWND hwnd, HWND hwndEdit, PTSTR szTitleNa
     pd.hDC         = NULL;
     pd.Flags       = PD_ALLPAGES | PD_COLLATE |
                      PD_RETURNDC | PD_NOSELECTION;
-    
+
     pd.nFromPage = 0;
     pd.nToPage = 0;
     pd.nMinPage = 0;
@@ -133,12 +133,12 @@ BOOL PopPrntPrintFile(HINSTANCE hInst, HWND hwnd, HWND hwndEdit, PTSTR szTitleNa
     hDlgPrint = CreateDialog(hInst, "PrintDlgBox", hwnd, &PrintDlgProc);
 
     SetDlgItemText(hDlgPrint, IDC_FILENAME, szTitleName);
-    
+
     // @BUG@ WindowsAPI callbacks are not defined properly:
     //     alias BOOL function(HDC, int) ABORTPROC;
     //
     // should be:
-    //     alias extern(Windows) BOOL function(HDC, int) ABORTPROC;    
+    //     alias extern(Windows) BOOL function(HDC, int) ABORTPROC;
     SetAbortProc(pd.hDC, cast(BOOL function(HDC, int))&AbortProc);
 
     // Start the document

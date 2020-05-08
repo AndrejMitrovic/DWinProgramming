@@ -27,10 +27,10 @@ auto toUTF16z(S)(S s)
 
 pragma(lib, "gdi32.lib");
 
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
 
 import uxSchema;
 import uxTheme;
@@ -75,10 +75,10 @@ int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int
     wndclass.hInstance     = hInstance;
     wndclass.hIcon         = LoadIcon(NULL, IDI_APPLICATION);
     wndclass.hCursor       = LoadCursor(NULL, IDC_ARROW);
-    
+
     //~ wndclass.hbrBackground = cast(HBRUSH) GetStockObject(WHITE_BRUSH);
     wndclass.hbrBackground = null;  // don't send WM_ERASEBKND messages
-    
+
     wndclass.lpszMenuName  = appName.toUTF16z;
     wndclass.lpszClassName = appName.toUTF16z;
 
@@ -129,7 +129,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     static HBITMAP hbmMem;
     static HANDLE  hOld;
     RECT rect;
-    
+
     switch (message)
     {
         case WM_SIZE:
@@ -141,7 +141,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         // the WM_ERASEBKND message to be sent.
         case WM_ERASEBKGND:
             return 1;
-        
+
         case WM_PAINT:
         {
             // Get DC for window
@@ -151,10 +151,10 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             hdcMem = CreateCompatibleDC(hdc);
             hbmMem = CreateCompatibleBitmap(hdc, cxClient, cyClient);
             hOld = SelectObject(hdcMem, hbmMem);
-        
+
             auto buttonRect = RECT(100, 100, 190, 130);
             DrawControl(hwnd, hdcMem, buttonRect, Control.Button);
-         
+
             // Transfer the off-screen DC to the screen
             BitBlt(hdc, 0, 0, cxClient, cyClient, hdcMem, 0, 0, SRCCOPY);
 
@@ -166,7 +166,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             EndPaint(hwnd, &ps);
             return 0;
         }
-        
+
         case WM_DESTROY:
             PostQuitMessage(0);
             return 0;
@@ -185,7 +185,7 @@ void DrawControl(HWND hwnd, HDC hdcMem, RECT rect, Control control)
         if (hTheme !is null)
             CloseThemeData(hTheme);
     }
-    
+
     final switch (control)
     {
         case Control.Button:
@@ -211,20 +211,20 @@ void DrawCustomButton(HDC hDC, RECT rc)
 {
     SIZE size;
     auto text = "My button";
-    
+
     FillRect(hDC,  &rc, cast(HBRUSH)GetStockObject(GRAY_BRUSH));
     FrameRect(hDC, &rc, cast(HBRUSH)GetStockObject(LTGRAY_BRUSH));
-    
+
     // calculate center
     GetTextExtentPoint32(hDC, text.toUTF16z, text.count, &size);
     auto rectWidth = (rc.right - rc.left);
     auto textWidth = (size.cx);
     auto xPos = rc.left + ((rectWidth - textWidth) / 2);
-    
+
     auto rectHeight = (rc.bottom - rc.top);
     auto textHeight = (size.cy);
     auto yPos = rc.top + ((rectHeight - textHeight) / 2);
-    
+
     TextOut(hDC, xPos, yPos, text.toUTF16z, text.count);
 }
 
@@ -235,10 +235,10 @@ void DrawThemedButton(HTHEME hTheme, HDC hDC, RECT rc)
 
     auto text = "My button";
     bool iState = 0;
-    
+
     hr = DrawThemeBackground(hTheme, hDC, BP_PUSHBUTTON, iState, &rc, null);
     hr = GetThemeBackgroundContentRect(hTheme, hDC, BP_PUSHBUTTON, iState, &rc, &rcContent);
-    hr = DrawThemeText(hTheme, hDC, BP_PUSHBUTTON, iState, 
+    hr = DrawThemeText(hTheme, hDC, BP_PUSHBUTTON, iState,
                        text.toUTF16z, text.count,
                        DT_CENTER | DT_VCENTER | DT_SINGLELINE,
                        0, &rcContent);

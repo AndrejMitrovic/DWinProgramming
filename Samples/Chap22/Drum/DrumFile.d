@@ -24,12 +24,12 @@ auto toUTF16z(S)(S s)
 pragma(lib, "gdi32.lib");
 pragma(lib, "comdlg32.lib");
 pragma(lib, "winmm.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.commdlg;
-import win32.mmsystem;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
+import core.sys.windows.mmsystem;
 
 import DrumTime;
 
@@ -67,14 +67,14 @@ static this()
     szDateID   = cast(wchar*)"ISCD".toUTF16z;
     szFmtID    = cast(wchar*)"fmt ".toUTF16z;
     szDataID   = cast(wchar*)"data".toUTF16z;
-    szSoftware = cast(char*)"DRUM by Charles Petzold, Programming Windows".toStringz;    
-    
+    szSoftware = cast(char*)"DRUM by Charles Petzold, Programming Windows".toStringz;
+
     szErrorNoCreate    = cast(wchar*)"File %s could not be opened for writing.".toUTF16z;
     szErrorCannotWrite = cast(wchar*)"File %s could not be written to.".toUTF16z;
     szErrorNotFound    = cast(wchar*)"File %s not found or cannot be opened.".toUTF16z;
     szErrorNotDrum     = cast(wchar*)"File %s is not a standard DRUM file.".toUTF16z;
     szErrorUnsupported = cast(wchar*)"File %s is not a supported DRUM file.".toUTF16z;
-    szErrorCannotRead  = cast(wchar*)"File %s cannot be read.".toUTF16z;    
+    szErrorCannotRead  = cast(wchar*)"File %s cannot be read.".toUTF16z;
 }
 
 BOOL DrumFileOpenDlg(HWND hwnd, wchar* szFileName, wchar* szTitleName)
@@ -208,7 +208,7 @@ TCHAR* DrumFileRead(DRUM* pdrum, TCHAR* szFileName)
 
     // Locate, read, and verify the "fmt " sub-chunk
     mmckinfo[1].ckid = mmioStringToFOURCC(szFmtID, 0);
-        
+
     if (mmioDescend(hmmio, &mmckinfo[1], &mmckinfo[0], MMIO_FINDCHUNK))
     {
         mmioClose(hmmio, 0);
@@ -257,10 +257,10 @@ TCHAR* DrumFileRead(DRUM* pdrum, TCHAR* szFileName)
         mmioClose(hmmio, 0);
         return szErrorCannotRead;
     }
-        
+
     // Close the file
     mmioClose(hmmio, 0);
-    
+
     // Convert format 1 to format 2 and copy the DRUM structure data
     if (iFormat == 1)
     {

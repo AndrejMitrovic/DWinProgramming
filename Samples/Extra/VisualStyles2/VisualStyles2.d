@@ -26,10 +26,10 @@ auto toUTF16z(S)(S s)
 
 pragma(lib, "gdi32.lib");
 
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
 
 import uxSchema;
 import uxTheme;
@@ -74,10 +74,10 @@ int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int
     wndclass.hInstance     = hInstance;
     wndclass.hIcon         = LoadIcon(NULL, IDI_APPLICATION);
     wndclass.hCursor       = LoadCursor(NULL, IDC_ARROW);
-    
+
     //~ wndclass.hbrBackground = cast(HBRUSH) GetStockObject(WHITE_BRUSH);
     wndclass.hbrBackground = null;  // don't send WM_ERASEBKND messages
-    
+
     wndclass.lpszMenuName  = appName.toUTF16z;
     wndclass.lpszClassName = appName.toUTF16z;
 
@@ -142,12 +142,12 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     PAINTSTRUCT ps;
     static POINT hitPoint;
     static bool mouseLDown;
-    
+
     static HDC     hdcMem;
     static HBITMAP hbmMem;
     static HANDLE  hOld;
     RECT rect;
-    
+
     switch (message)
     {
         case WM_LBUTTONDOWN:
@@ -156,8 +156,8 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             mouseLDown = true;
             InvalidateRect(hwnd, NULL, TRUE);
             return 0;
-        }        
-        
+        }
+
         case WM_LBUTTONUP:
         {
             hitPoint = get!POINT(lParam);
@@ -165,14 +165,14 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             InvalidateRect(hwnd, NULL, TRUE);
             return 0;
         }
-        
+
         case WM_MOUSEMOVE:
         {
             hitPoint = get!POINT(lParam);
             InvalidateRect(hwnd, NULL, TRUE);
             return 0;
         }
-        
+
         case WM_SIZE:
             cxClient = LOWORD(lParam);
             cyClient = HIWORD(lParam);
@@ -182,7 +182,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         // the WM_ERASEBKND message to be sent.
         case WM_ERASEBKGND:
             return 1;
-        
+
         case WM_PAINT:
         {
             // Get DC for window
@@ -192,11 +192,11 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             hdcMem = CreateCompatibleDC(hdc);
             hbmMem = CreateCompatibleBitmap(hdc, cxClient, cyClient);
             hOld = SelectObject(hdcMem, hbmMem);
-        
+
             //~ writeln(buttonState);
             auto buttonRect = RECT(100, 100, 190, 130);
             DrawControl(hwnd, hdcMem, buttonRect, Control.Button, mouseLDown, hitPoint);
-         
+
             // Transfer the off-screen DC to the screen
             BitBlt(hdc, 0, 0, cxClient, cyClient, hdcMem, 0, 0, SRCCOPY);
 
@@ -208,7 +208,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             EndPaint(hwnd, &ps);
             return 0;
         }
-        
+
         case WM_DESTROY:
             PostQuitMessage(0);
             return 0;
@@ -227,7 +227,7 @@ void DrawControl(HWND hwnd, HDC hdcMem, RECT rect, Control control, bool mouseLD
         if (hTheme !is null)
             CloseThemeData(hTheme);
     }
-    
+
     final switch (control)
     {
         case Control.Button:
@@ -253,20 +253,20 @@ void DrawCustomButton(HDC hDC, RECT rc, bool mouseLDown, POINT hitPoint)
 {
     SIZE size;
     auto text = "My button";
-    
+
     FillRect(hDC,  &rc, cast(HBRUSH)GetStockObject(GRAY_BRUSH));
     FrameRect(hDC, &rc, cast(HBRUSH)GetStockObject(LTGRAY_BRUSH));
-    
+
     // calculate center
     GetTextExtentPoint32(hDC, text.toUTF16z, text.count, &size);
     auto rectWidth = (rc.right - rc.left);
     auto textWidth = (size.cx);
     auto xPos = rc.left + ((rectWidth - textWidth) / 2);
-    
+
     auto rectHeight = (rc.bottom - rc.top);
     auto textHeight = (size.cy);
     auto yPos = rc.top + ((rectHeight - textHeight) / 2);
-    
+
     TextOut(hDC, xPos, yPos, text.toUTF16z, text.count);
 }
 
@@ -275,11 +275,11 @@ void DrawThemedButton(HTHEME hTheme, HDC hDC, RECT rc, bool mouseLDown, POINT hi
     RECT rcContent;
     HRESULT hr;
     int state;
-    auto text = "My button";   
+    auto text = "My button";
 
     WORD hitResult;
-    HitTestThemeBackground(hTheme, hDC, BP_PUSHBUTTON, state, 
-                           HTTB_BACKGROUNDSEG, &rc, null, hitPoint, &hitResult);        
+    HitTestThemeBackground(hTheme, hDC, BP_PUSHBUTTON, state,
+                           HTTB_BACKGROUNDSEG, &rc, null, hitPoint, &hitResult);
 
     if (hitResult == HTNOWHERE)
     {
@@ -289,10 +289,10 @@ void DrawThemedButton(HTHEME hTheme, HDC hDC, RECT rc, bool mouseLDown, POINT hi
     {
         state = mouseLDown ? PBS_PRESSED : PBS_HOT;
     }
-    
+
     DrawThemeBackground(hTheme, hDC, BP_PUSHBUTTON, state, &rc, null);
     GetThemeBackgroundContentRect(hTheme, hDC, BP_PUSHBUTTON, state, &rc, &rcContent);
-    DrawThemeText(hTheme, hDC, BP_PUSHBUTTON, state, 
+    DrawThemeText(hTheme, hDC, BP_PUSHBUTTON, state,
                   text.toUTF16z, text.count,
                   DT_CENTER | DT_VCENTER | DT_SINGLELINE,
                   0, &rcContent);

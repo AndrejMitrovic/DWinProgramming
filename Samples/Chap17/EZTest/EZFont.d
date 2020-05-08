@@ -21,11 +21,11 @@ auto toUTF16z(S)(S s)
 
 pragma(lib, "gdi32.lib");
 pragma(lib, "comdlg32.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.commdlg;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
 
 enum EZ_ATTR_BOLD         = 1;
 enum EZ_ATTR_ITALIC       = 2;
@@ -81,10 +81,10 @@ HFONT EzCreateFont(HDC hdc, string szFaceName, int iDeciPtHeight,
     lf.lfQuality        = 0;
     lf.lfPitchAndFamily = 0;
 
-    
+
     lf.lfFaceName[] = ' ';
-    
-    // unsure about this, investigate. 
+
+    // unsure about this, investigate.
     lf.lfFaceName[0..szFaceName.length] = szFaceName.toUTF16;
 
     hFont = CreateFontIndirect(&lf);
