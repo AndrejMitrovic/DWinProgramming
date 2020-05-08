@@ -137,8 +137,10 @@ void PaintRoutine(HWND hwnd, HDC hdc, int cxArea, int cyArea)
 }
 
 extern (Windows)
-LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
+
     static DOCINFO di = DOCINFO(DOCINFO.sizeof,  "Font Demo: Printing");
     static int cxClient, cyClient;
     static PRINTDLG pd = PRINTDLG(PRINTDLG.sizeof);

@@ -289,8 +289,10 @@ LRESULT WndProc4(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 // Main window to create child windows
 // -----------------------------------
 extern (Windows)
-LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
+
     static HWND hwndChild[4];
     static string[] szChildClass = ["Child1", "Child2", "Child3", "Child4"];
     static WNDPROC[] ChildProc = [&WndProc1, &WndProc2, &WndProc3, &WndProc4];

@@ -132,8 +132,10 @@ void Triangle(HDC hdc, POINT[] pt)
 }
 
 extern(Windows)
-LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
+
     static HWND hwndSmaller, hwndLarger;    // button window handles
     static int  cxClient, cyClient, cxChar, cyChar;
     int cx, cy;

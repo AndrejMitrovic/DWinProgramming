@@ -133,8 +133,10 @@ auto get(T)(LPARAM lParam)
 }
 
 extern (Windows)
-LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
+
     static int cxClient, cyClient, cxSource, cySource;
     int x, y;
     HDC hdc;

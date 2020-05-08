@@ -102,8 +102,10 @@ int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int
 }
 
 extern (Windows)
-LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
+
     static BITMAPFILEHEADER *[2] pbmfh;
     static BITMAPINFO       *[2] pbmi;
     static BYTE             *[2] pBits;

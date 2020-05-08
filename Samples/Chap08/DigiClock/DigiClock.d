@@ -191,8 +191,10 @@ void DisplayTime(HDC hdc, BOOL f24Hour, BOOL fSuppress)
 
 
 extern(Windows)
-LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
+
     static BOOL f24Hour, fSuppress;
     static HBRUSH hBrushRed;
     static int cxClient, cyClient;

@@ -105,8 +105,10 @@ int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int
 __gshared wchar[MAX_PATH] szFileName  = 0;
 __gshared wchar[MAX_PATH] szTitleName = 0;
 extern (Windows)
-LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
+
     static BITMAPINFO* pbmi;
     static BYTE* pBits;
     static int cxDib, cyDib, cBits;

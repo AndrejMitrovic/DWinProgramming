@@ -124,8 +124,10 @@ int EnhMetaFileProc(HDC hdc, HANDLETABLE* pHandleTable,
 }
 
 extern (Windows)
-LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
+
     HDC hdc;
     HENHMETAFILE hemf;
     PAINTSTRUCT  ps;

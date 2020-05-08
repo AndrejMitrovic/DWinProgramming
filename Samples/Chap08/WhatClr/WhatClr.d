@@ -117,8 +117,10 @@ void FindWindowSize(ref int pcxWindow, ref int pcyWindow)
 }
 
 extern (Windows)
-LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
+
     static COLORREF cr;
     static COLORREF crLast;
     static HDC hdcScreen;

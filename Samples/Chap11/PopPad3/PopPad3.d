@@ -155,8 +155,10 @@ wchar[MAX_PATH] szFileName  = 0;
 wchar[MAX_PATH] szTitleName = 0;
 
 extern (Windows)
-LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
+
     static BOOL bNeedSave = FALSE;
     static HINSTANCE hInst;
     static HWND  hwndEdit;

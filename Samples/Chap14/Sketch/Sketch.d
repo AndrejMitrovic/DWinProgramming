@@ -114,8 +114,10 @@ void GetLargestDisplayMode(out int pcxBitmap, out int pcyBitmap)
 }
 
 extern (Windows)
-LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
+
     static BOOL fLeftButtonDown, fRightButtonDown;
     static HBITMAP hBitmap;
     static HDC hdcMem;

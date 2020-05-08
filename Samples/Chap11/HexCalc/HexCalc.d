@@ -144,8 +144,10 @@ DWORD CalcIt(UINT iFirstNum, int iOperation, UINT iNum)
 }
 
 extern (Windows)
-LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
+
     static BOOL bNewNumber = TRUE;
     static int  iOperation = '=';
     static UINT iNumber, iFirstNum;

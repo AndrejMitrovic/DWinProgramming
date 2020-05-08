@@ -150,8 +150,10 @@ __gshared DRUM  drum;
 __gshared HMENU hMenu;
 
 extern (Windows)
-LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
+
     static int iTempo = 50, iIndexLast;
 
     HDC hdc;

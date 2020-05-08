@@ -113,8 +113,10 @@ void DrawBitmap(HDC hdc, int xStart, int yStart, HBITMAP hBitmap)
 }
 
 extern (Windows)
-LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
+
     static HINSTANCE hLibrary;
     static ushort iCurrent = 1;
     HBITMAP hBitmap;
