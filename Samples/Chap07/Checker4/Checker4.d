@@ -21,21 +21,20 @@ auto toUTF16z(S)(S s)
 
 pragma(lib, "gdi32.lib");
 
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
 
 extern (Windows)
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int iCmdShow)
 {
     int result;
-    void exceptionHandler(Throwable e) { throw e; }
 
     try
     {
-        Runtime.initialize(&exceptionHandler);
+        Runtime.initialize();
         result = myWinMain(hInstance, hPrevInstance, lpCmdLine, iCmdShow);
-        Runtime.terminate(&exceptionHandler);
+        Runtime.terminate();
     }
     catch (Throwable o)
     {
@@ -213,7 +212,7 @@ LRESULT ChildWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                 SendMessage(GetParent(hwnd), message, wParam, lParam);
                 return 0;
             }
-            
+
             // For Return and Space, fall through to WM_LBUTTONDOWN, which will toggle the square
             goto case;
 

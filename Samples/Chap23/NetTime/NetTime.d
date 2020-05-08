@@ -7,7 +7,7 @@ module NetTIme;
 
 /+
  + Note: Doesn't seem to work. The original C example doesn't work either.
- + 
+ +
  +/
 
 import core.memory;
@@ -29,14 +29,14 @@ pragma(lib, "gdi32.lib");
 pragma(lib, "comdlg32.lib");
 pragma(lib, "winmm.lib");
 pragma(lib, "Ws2_32.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.commdlg;
-import win32.mmsystem;
-import win32.winnls;
-import win32.winsock2;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
+import core.sys.windows.mmsystem;
+import core.sys.windows.winnls;
+import core.sys.windows.winsock2;
 
 import resource;
 
@@ -51,13 +51,12 @@ extern (Windows)
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int iCmdShow)
 {
     int result;
-    void exceptionHandler(Throwable e) { throw e; }
 
     try
     {
-        Runtime.initialize(&exceptionHandler);
+        Runtime.initialize();
         result = myWinMain(hInstance, hPrevInstance, lpCmdLine, iCmdShow);
-        Runtime.terminate(&exceptionHandler);
+        Runtime.terminate();
     }
     catch (Throwable o)
     {
@@ -147,7 +146,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_DESTROY:
             PostQuitMessage(0);
             return 0;
-        
+
         default:
     }
 
@@ -173,13 +172,13 @@ BOOL MainDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     static HWND hwndButton, hwndEdit;
     static SOCKET sock;
     static SOCKADDR_IN sa;
-    
+
     int iError, iSize;
     ulong ulTime;
     WORD wEvent, wError;
     WSADATA WSAData;
     WSAData.szDescription = 0;
-    
+
     switch (message)
     {
         case WM_INITDIALOG:
@@ -231,7 +230,7 @@ BOOL MainDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                     // Call "connect" with IP address and time-server port
                     sa.sin_family = AF_INET;
                     sa.sin_port = htons(IPPORT_TIMESERVER);
-                    
+
                     // @BUG@: S_un is not in the bindings
                     //~ sa.sin_addr.S_un.S_addr = inet_addr(szIPAddr.toStringz);
                     sa.sin_addr.S_addr = inet_addr(szIPAddr.toStringz);
@@ -279,7 +278,7 @@ BOOL MainDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
                     DestroyWindow(GetParent(hwnd));
                     return TRUE;
-                    
+
                 default:
             }
 
@@ -336,12 +335,12 @@ BOOL MainDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                     ChangeSystemTime(hwndEdit, cast(uint)ulTime);  // downcasting..
                     SendMessage(hwnd, WM_COMMAND, IDCANCEL, 0);
                     return TRUE;
-                    
+
                 default:
             }
 
             return FALSE;
-            
+
         default:
     }
 
@@ -381,7 +380,7 @@ BOOL ServerDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
                 case IDOK:
                     GetDlgItemText(hwnd, wServer, szLabel.ptr, szLabel.count);
-                
+
                     szServer = szLabel[szLabel.indexOf("(") .. szLabel.indexOf(")")];
                     EndDialog(hwnd, TRUE);
                     return TRUE;
@@ -389,12 +388,12 @@ BOOL ServerDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                 case IDCANCEL:
                     EndDialog(hwnd, FALSE);
                     return TRUE;
-            
+
                 default:
             }
 
             break;
-            
+
         default:
     }
 
@@ -439,8 +438,8 @@ void FormatUpdatedTime(HWND hwndEdit, SYSTEMTIME* pstOld, SYSTEMTIME* pstNew)
     szTimeOld = 0;
     szDateNew = 0;
     szTimeNew = 0;
-    
-    
+
+
     GetDateFormat(LOCALE_USER_DEFAULT, LOCALE_NOUSEROVERRIDE | DATE_SHORTDATE,
                   pstOld, NULL, szDateOld.ptr, szDateOld.count);
 

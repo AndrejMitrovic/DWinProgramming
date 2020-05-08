@@ -24,12 +24,12 @@ auto toUTF16z(S)(S s)
 pragma(lib, "gdi32.lib");
 pragma(lib, "comdlg32.lib");
 pragma(lib, "winmm.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.commdlg;
-import win32.mmsystem;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
+import core.sys.windows.mmsystem;
 
 import resource;
 
@@ -41,13 +41,12 @@ extern (Windows)
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int iCmdShow)
 {
     int result;
-    void exceptionHandler(Throwable e) { throw e; }
 
     try
     {
-        Runtime.initialize(&exceptionHandler);
+        Runtime.initialize();
         result = myWinMain(hInstance, hPrevInstance, lpCmdLine, iCmdShow);
-        Runtime.terminate(&exceptionHandler);
+        Runtime.terminate();
     }
     catch (Throwable o)
     {
@@ -154,7 +153,7 @@ extern (Windows)
 LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     static int iTempo = 50, iIndexLast;
-    
+
     HDC hdc;
     int i, x, y;
     PAINTSTRUCT ps;
@@ -220,7 +219,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
                     szFileName = 0;
                     szTitleName = 0;
-                    
+
                     // Open a drm file
                     if (DrumFileOpenDlg(hwnd, szFileName.ptr, szTitleName.ptr))
                     {
@@ -237,7 +236,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
                             SetScrollPos(hwnd, SB_VERT, iTempo, TRUE);
                             SetScrollPos(hwnd, SB_HORZ, drum.iVelocity, TRUE);
-                            
+
                             DrumSetParams(&drum);
                             InvalidateRect(hwnd, NULL, FALSE);
                             bNeedSave = FALSE;
@@ -297,7 +296,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                 case IDM_APP_ABOUT:
                     DialogBox(hInst, "AboutBox", hwnd, &AboutProc);
                     return 0;
-                
+
                 default:
             }
 
@@ -476,7 +475,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             ErrorMessage(hwnd, "Can't set timer event for tempo",
                          to!string(fromWStringz(szTitleName.ptr)));
             goto case;
-        
+
         case WM_USER_FINISHED:
             DrumEndSequence(TRUE);
             CheckMenuItem(hMenu, IDM_SEQUENCE_RUNNING, MF_UNCHECKED);
@@ -499,7 +498,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             DrumEndSequence(TRUE);
             PostQuitMessage(0);
             return 0;
-        
+
         default:
     }
 
@@ -521,12 +520,12 @@ BOOL AboutProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                 case IDOK:
                     EndDialog(hDlg, 0);
                     return TRUE;
-                
+
                 default:
             }
 
             break;
-            
+
         default:
     }
 
@@ -581,7 +580,7 @@ void DoCaption(HWND hwnd, string szTitleName)
 int AskAboutSave(HWND hwnd, string szTitleName)
 {
     int iReturn;
-    
+
     szBuffer = format("Save current changes in %s?", (szTitleName.length ? szTitleName : szUntitled));
     iReturn = MessageBox(hwnd, szBuffer.toUTF16z, appName.toUTF16z, MB_YESNOCANCEL | MB_ICONQUESTION);
 

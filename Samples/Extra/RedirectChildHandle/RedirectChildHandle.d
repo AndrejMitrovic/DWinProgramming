@@ -15,10 +15,10 @@ import std.range;
 import std.string;
 import std.utf;
 
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
 
 import std.algorithm;
 import std.array;
@@ -59,7 +59,7 @@ auto toUTF16z(S)(S s)
 void main(string[] args)
 {
     string[] argv = ["RedirectStdChildProcess.exe", "empty.txt"];  // simulate args
-    
+
     SECURITY_ATTRIBUTES saAttr;
 
     writeln("\n->Start of parent execution.\n");
@@ -135,10 +135,10 @@ void CreateChildProcess()
         // Some applications might keep these handles to monitor the status
         // of the child process, for example.
 
-        // close 
+        // close
         CloseHandle(childStdoutWrite);
         CloseHandle(childStdinRead);
-        
+
         CloseHandle(piProcInfo.hProcess);
         CloseHandle(piProcInfo.hThread);
     }
@@ -220,11 +220,11 @@ void ErrorExit(string lpszFunction)
         dw,
         MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
         cast(LPTSTR)&lpMsgBuf,
-        0, NULL);    
-    
+        0, NULL);
+
     lpDisplayBuf = cast(LPVOID)LocalAlloc(LMEM_ZEROINIT,
                                       (lstrlen(cast(LPCTSTR)lpMsgBuf) + lstrlen(cast(LPCTSTR)lpszFunction) + 40) * (TCHAR.sizeof));
-    
+
     auto str = format("%s failed with error %s: %s",
                       lpszFunction,
                       dw,

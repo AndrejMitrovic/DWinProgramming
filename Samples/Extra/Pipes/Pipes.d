@@ -12,10 +12,10 @@ import std.range;
 import std.string;
 import std.utf;
 
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
 
 import std.algorithm;
 import std.array;
@@ -49,7 +49,7 @@ struct ProcessInfo
     HANDLE childStdinRead;
     HANDLE childStdinWrite;
     HANDLE childStdoutRead;
-    HANDLE childStdoutWrite;    
+    HANDLE childStdoutWrite;
 }
 
 int getReturnCode(ref ProcessInfo procInfo)
@@ -68,7 +68,7 @@ int getReturnCode(ref ProcessInfo procInfo)
         //~ ErrorExit("CreateProcess");
     }
     CloseHandle(procInfo.procHandle);
-    
+
     return exitCode;
 }
 
@@ -118,14 +118,14 @@ string readProcessPipeString(ProcessInfo procInfo)
     HANDLE hParentStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
     string buffer;
     buffer.reserve(4096 * 16);
-    
+
     // Close the write end of the pipe before reading from the
     // read end of the pipe, to control child process execution.
     // The pipe is assumed to have enough buffer space to hold the
     // data the child process has already written to it.
     if (!CloseHandle(procInfo.childStdoutWrite))
         ErrorExit(("StdOutWr CloseHandle"));
-    
+
     while (1)
     {
         bSuccess = ReadFile(procInfo.childStdoutRead, chBuf.ptr, BUFSIZE, &dwRead, NULL);
@@ -135,7 +135,7 @@ string readProcessPipeString(ProcessInfo procInfo)
 
         buffer ~= chBuf[0..dwRead];
     }
-    
+
     return buffer;
 }
 
@@ -202,11 +202,11 @@ void ErrorExit(string lpszFunction)
         dw,
         MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
         cast(LPTSTR)&lpMsgBuf,
-        0, NULL);    
-    
+        0, NULL);
+
     lpDisplayBuf = cast(LPVOID)LocalAlloc(LMEM_ZEROINIT,
                                       (lstrlen(cast(LPCTSTR)lpMsgBuf) + lstrlen(cast(LPCTSTR)lpszFunction) + 40) * (TCHAR.sizeof));
-    
+
     auto str = format("%s failed with error %s: %s",
                       lpszFunction,
                       dw,

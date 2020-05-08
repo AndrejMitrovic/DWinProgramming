@@ -21,11 +21,11 @@ auto toUTF16z(S)(S s)
 
 pragma(lib, "gdi32.lib");
 pragma(lib, "comdlg32.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.commdlg;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
 
 import resource;
 
@@ -37,13 +37,12 @@ extern (Windows)
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int iCmdShow)
 {
     int result;
-    void exceptionHandler(Throwable e) { throw e; }
 
     try
     {
-        Runtime.initialize(&exceptionHandler);
+        Runtime.initialize();
         result = myWinMain(hInstance, hPrevInstance, lpCmdLine, iCmdShow);
-        Runtime.terminate(&exceptionHandler);
+        Runtime.terminate();
     }
     catch (Throwable o)
     {
@@ -316,7 +315,7 @@ void Justify(HDC hdc, PTSTR pText, RECT* prc, int iAlign)
 
                 xStart = prc.left;
                 break;
-                
+
             default:
         }
 
@@ -339,7 +338,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     static int iAlign = IDM_ALIGN_LEFT;
     static LOGFONT  lf;
     static PRINTDLG pd;
-    static string szText = 
+    static string szText =
         "Call me Ishmael. Some years ago -- never "
         "mind how long precisely -- having little "
         "or no money in my purse, and nothing "
@@ -370,7 +369,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         "some time or other, cherish very nearly "
         "the same feelings towards the ocean with "
         "me.";
-        
+
     BOOL  fSuccess;
     HDC   hdc, hdcPrn;
     HMENU hMenu;
@@ -505,7 +504,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                     CheckMenuItem(hMenu, iAlign, MF_CHECKED);
                     InvalidateRect(hwnd, NULL, TRUE);
                     return 0;
-                
+
                 default:
             }
 
@@ -533,7 +532,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_DESTROY:
             PostQuitMessage(0);
             return 0;
-        
+
         default:
     }
 

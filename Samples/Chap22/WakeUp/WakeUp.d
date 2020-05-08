@@ -18,13 +18,13 @@ pragma(lib, "gdi32.lib");
 pragma(lib, "comdlg32.lib");
 pragma(lib, "winmm.lib");
 pragma(lib, "comctl32.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.commdlg;
-import win32.mmsystem;
-import win32.commctrl;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
+import core.sys.windows.mmsystem;
+import core.sys.windows.commctrl;
 
 string appName     = "WakeUp";
 string description = "WakeUp";
@@ -34,13 +34,12 @@ extern (Windows)
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int iCmdShow)
 {
     int result;
-    void exceptionHandler(Throwable e) { throw e; }
 
     try
     {
-        Runtime.initialize(&exceptionHandler);
+        Runtime.initialize();
         result = myWinMain(hInstance, hPrevInstance, lpCmdLine, iCmdShow);
-        Runtime.terminate(&exceptionHandler);
+        Runtime.terminate();
     }
     catch (Throwable o)
     {
@@ -221,7 +220,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             ft = *cast(FILETIME*) & li;
             FileTimeToSystemTime(&ft, &st);
             st.wMinute = st.wSecond = st.wMilliseconds = 0;
-            
+
             SendMessage(hwndDTP, DTM_SETSYSTEMTIME, 0, cast(LPARAM)&st);
             return 0;
 
@@ -280,7 +279,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                     EnableWindow(hwndPush, FALSE);
                     SetFocus(hwndDTP);
                     return 0;
-                
+
                 default:
             }
 
@@ -308,11 +307,11 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                             }
 
                             return 0;
-                            
+
                         default:
                     }
                     break;
-                    
+
                 default:
             }
 
@@ -354,7 +353,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
             PostQuitMessage(0);
             return 0;
-            
+
         default:
     }
 
@@ -389,7 +388,7 @@ LRESULT SubProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_SETFOCUS:
             hwndFocus = hwnd;
             break;
-        
+
         default:
     }
 

@@ -4,10 +4,10 @@
  +     (See accompanying file LICENSE_1_0.txt or copy at
  +           http://www.boost.org/LICENSE_1_0.txt)
  +
- + Demonstrates using Cartesian coordinates which has 
+ + Demonstrates using Cartesian coordinates which has
  + the Y axis positive values towards the top compared to GDI.
- + 
- + More info found here: 
+ +
+ + More info found here:
  + http://www.functionx.com/visualc/gdi/gdicoord.htm
  +/
 
@@ -29,10 +29,10 @@ auto toUTF16z(S)(S s)
 
 pragma(lib, "gdi32.lib");
 
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
 
 string appName     = "Cartesian";
 string description = "Cartesian Demo";
@@ -42,13 +42,12 @@ extern (Windows)
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int iCmdShow)
 {
     int result;
-    void exceptionHandler(Throwable e) { throw e; }
 
     try
     {
-        Runtime.initialize(&exceptionHandler);
+        Runtime.initialize();
         result = myWinMain(hInstance, hPrevInstance, lpCmdLine, iCmdShow);
-        Runtime.terminate(&exceptionHandler);
+        Runtime.terminate();
     }
     catch (Throwable o)
     {
@@ -74,10 +73,10 @@ int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int
     wndclass.hInstance     = hInstance;
     wndclass.hIcon         = LoadIcon(NULL, IDI_APPLICATION);
     wndclass.hCursor       = LoadCursor(NULL, IDC_ARROW);
-    
+
     //~ wndclass.hbrBackground = cast(HBRUSH) GetStockObject(WHITE_BRUSH);
     wndclass.hbrBackground = null;  // don't send WM_ERASEBKND messages
-    
+
     wndclass.lpszMenuName  = appName.toUTF16z;
     wndclass.lpszClassName = appName.toUTF16z;
 
@@ -123,7 +122,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     static HBITMAP hbmMem;
     static HANDLE  hOld;
     RECT rect;
-    
+
     switch (message)
     {
         case WM_SIZE:
@@ -135,32 +134,32 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         // the WM_ERASEBKND message to be sent.
         case WM_ERASEBKGND:
             return 1;
-        
+
         case WM_PAINT:
         {
             // Get DC for window
             hdc = BeginPaint(hwnd, &ps);
-            
+
             // Create an off-screen DC for double-buffering
             hdcMem = CreateCompatibleDC(hdc);
             hbmMem = CreateCompatibleBitmap(hdc, cxClient, cyClient);
             hOld = SelectObject(hdcMem, hbmMem);
-        
+
             // Draw into hdcMem
             GetClientRect(hwnd, &rect);
-            
+
             // Flip Y axis
             SetMapMode(hdcMem, MM_ANISOTROPIC);
             SetViewportOrgEx(hdcMem, 0, rect.bottom, null);
             SetWindowExtEx(hdcMem, rect.bottom, rect.right, null);
             SetViewportExtEx(hdcMem, rect.bottom, -rect.right, null);
-            
+
             // Required for both contexts
             SetMapMode(hdc, MM_ANISOTROPIC);
             SetViewportOrgEx(hdc, 0, rect.bottom, null);
             SetWindowExtEx(hdc, rect.bottom, rect.right, null);
             SetViewportExtEx(hdc, rect.bottom, -rect.right, null);
-            
+
             FillRect(hdcMem, &rect, GetStockObject(BLACK_BRUSH));
 
             SelectObject(hdcMem, GetStockObject(WHITE_PEN));
@@ -178,7 +177,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             EndPaint(hwnd, &ps);
             return 0;
         }
-        
+
         case WM_DESTROY:
             PostQuitMessage(0);
             return 0;

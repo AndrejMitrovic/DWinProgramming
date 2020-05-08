@@ -17,10 +17,10 @@ import std.string;
 import std.utf;
 import std.process;
 
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
 
 import std.algorithm;
 import std.array;

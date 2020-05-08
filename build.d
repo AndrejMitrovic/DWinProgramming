@@ -19,9 +19,9 @@ enum curdir = ".";
 
 alias std.path.absolutePath rel2abs;
 
-string[] RCINCLUDES = [r"C:\Program Files\Microsoft SDKs\Windows\v7.1\Include",
-                       r"C:\Program Files\Microsoft Visual Studio 10.0\VC\include",
-                       r"C:\Program Files\Microsoft Visual Studio 10.0\VC\atlmfc\include"];
+string[] RCINCLUDES = [`C:\Program Files\Microsoft SDKs\Windows\v7.1\Include`,
+                       `C:\Program Files\Microsoft Visual Studio 10.0\VC\include`,
+                       `C:\Program Files\Microsoft Visual Studio 10.0\VC\atlmfc\include`];
 
 extern(C) int kbhit();
 extern(C) int getch();
@@ -71,7 +71,7 @@ void checkWinLib()
 
 void checkTools()
 {
-    system("echo int x; > test.h");
+    executeShell("echo int x; > test.h");
 
     auto res = executeShell("cmd /c htod test.h").status;
     if (res == -1 || res == 1)
@@ -80,12 +80,12 @@ void checkTools()
         writeln("Warning: HTOD missing, won't retranslate .h headers.");
     }
 
-    try { std.file.remove("test.h"); } catch {};
-    try { std.file.remove("test.d"); } catch {};
+    collectException(std.file.remove("test.h"));
+    collectException(std.file.remove("test.d"));
 
     if (compiler == Compiler.DMD)
     {
-        system("echo //void > test.rc");
+        executeShell("echo //void > test.rc");
         string cmd = (compiler == Compiler.DMD)
                    ? "cmd /c rc test.rc > nul"
                    : "cmd /c windres test.rc > nul";
@@ -97,13 +97,13 @@ void checkTools()
             writeln("Warning: RC Compiler not found. Builder will use precompiled resources. See README for more details.");
         }
 
-        try { std.file.remove("test.rc");   } catch {};
-        try { std.file.remove("test.res");  } catch {};
+        collectException(std.file.remove("test.rc"));
+        collectException(std.file.remove("test.res"));
     }
 
     if (!skipResCompile && !RCINCLUDES.allExist)
     {
-        auto includes = getenv("RCINCLUDES").split(";");
+        auto includes = environment["RCINCLUDES"].split(";");
         if (includes.allExist && includes.length == RCINCLUDES.length)
         {
             RCINCLUDES = includes;
@@ -177,8 +177,8 @@ string[] getProjectDirs(string root)
 bool buildProject(string dir, out string errorMsg)
 {
     string appName = rel2abs(dir).baseName;
-    string exeName = rel2abs(dir) ~ r"\" ~ appName ~ ".exe";
-    string LIBPATH = r".";
+    string exeName = rel2abs(dir) ~ `\` ~ appName ~ ".exe";
+    string LIBPATH = ".";
 
     string debugFlags = "-IWindowsAPI -I. -version=Unicode -version=WindowsXP -d -g -w -wi";
     string releaseFlags = (compiler == Compiler.DMD)
@@ -200,7 +200,7 @@ bool buildProject(string dir, out string errorMsg)
     // have to clean .o files for GCC
     if (compiler == Compiler.GDC)
     {
-        executeShell("cmd /c del " ~ rel2abs(dir) ~ r"\*.o > nul");
+        executeShell("cmd /c del " ~ rel2abs(dir) ~ `\*.o > nul`);
     }
 
     if (resources.length)
@@ -240,8 +240,8 @@ bool buildProject(string dir, out string errorMsg)
 
     // @BUG@ htod can't output via -of or -od, causes multithreading issues.
     // We're distributing precompiled .d files now.
-    //~ headers.length && system("htod " ~ headers[0] ~ " " ~ r"-IC:\dm\include");
-    //~ headers.length && system("copy resource.d " ~ rel2abs(dir) ~ r"\resource.d > nul");
+    //~ headers.length && executeShell("htod " ~ headers[0] ~ " " ~ `-IC:\dm\include`);
+    //~ headers.length && executeShell("copy resource.d " ~ rel2abs(dir) ~ `\resource.d > nul`);
 
     // get sources after any .h header files were converted to .d header files
     //~ auto sources   = dir.getFilesByExt(".d", "res");
@@ -257,9 +257,9 @@ bool buildProject(string dir, out string errorMsg)
             case Compiler.DMD:
             {
                 cmd = "dmd -of" ~ exeName ~
-                      " -od" ~ rel2abs(dir) ~ r"\" ~
-                      " -I" ~ LIBPATH ~ r"\" ~
-                      " " ~ LIBPATH ~ r"\" ~ win32lib ~
+                      " -od" ~ rel2abs(dir) ~ `\` ~
+                      " -I" ~ LIBPATH ~ `\` ~
+                      " " ~ LIBPATH ~ `\` ~ win32lib ~
                       " " ~ FLAGS ~
                       " " ~ sources.flatten;
 
@@ -274,31 +274,21 @@ bool buildProject(string dir, out string errorMsg)
                     enum bitSwitch = "-m32";
 
                 cmd = "gdmd.bat " ~ bitSwitch ~ " " ~ "-fignore-unknown-pragmas -mwindows -of" ~ exeName ~
-                      " -od" ~ rel2abs(dir) ~ r"\" ~
-                      " -Llibwinmm.a -Llibuxtheme.a -Llibcomctl32.a -Llibwinspool.a -Llibws2_32.a -Llibgdi32.a -I" ~ LIBPATH ~ r"\" ~
-                      " " ~ LIBPATH ~ r"\" ~ win32lib ~
+                      " -od" ~ rel2abs(dir) ~ `\` ~
+                      " -Llibwinmm.a -Llibuxtheme.a -Llibcomctl32.a -Llibwinspool.a -Llibws2_32.a -Llibgdi32.a -I" ~ LIBPATH ~ `\` ~
+                      " " ~ LIBPATH ~ `\` ~ win32lib ~
                       " " ~ FLAGS ~
                       " " ~ sources.flatten;
                 break;
             }
         }
 
-        auto res = system(cmd);
-        if (res != 0)
+        auto res = executeShell(cmd);
+        if (res.status != 0)
         {
+            errorMsg = res.output;
             return false;
         }
-
-        // major note: buggy, has weird threading issues,
-        // it's better to wait for the new std.process module.
-        /+ auto pc = executeShell(cmd);
-        auto output = pc.output;
-        auto res = pc.status;
-        if (res == -1 || res == 1)
-        {
-            errorMsg = output;
-            return false;
-        } +/
     }
 
     return true;
@@ -307,8 +297,8 @@ bool buildProject(string dir, out string errorMsg)
 void runApp(string dir)
 {
     string appName = rel2abs(dir).baseName;
-    string exeName = rel2abs(dir) ~ r"\" ~ appName ~ ".exe";
-    system(exeName);
+    string exeName = rel2abs(dir) ~ `\` ~ appName ~ ".exe";
+    executeShell(exeName);
 }
 
 void buildProjectDirs(string[] dirs, bool cleanOnly = false)
@@ -340,8 +330,8 @@ void buildProjectDirs(string[] dirs, bool cleanOnly = false)
         {
             if (cleanOnly)
             {
-                executeShell("cmd /c del " ~ dir ~ r"\" ~ "*.obj > nul");
-                executeShell("cmd /c del " ~ dir ~ r"\" ~ "*.exe > nul");
+                executeShell("cmd /c del " ~ dir ~ `\` ~ "*.obj > nul");
+                executeShell("cmd /c del " ~ dir ~ `\` ~ "*.exe > nul");
             }
             else
             {
@@ -350,7 +340,7 @@ void buildProjectDirs(string[] dirs, bool cleanOnly = false)
                 {
                     writefln("\nfail: %s\n%s", dir.relativePath(), errorMsg);
                     errorMsgs ~= errorMsg;
-                    failedBuilds ~= dir.relativePath() ~ r"\" ~ dir.baseName ~ ".exe";
+                    failedBuilds ~= dir.relativePath() ~ `\` ~ dir.baseName ~ ".exe";
                 }
                 else
                 {
@@ -375,7 +365,7 @@ void buildProjectDirs(string[] dirs, bool cleanOnly = false)
 
     foreach (dir; serialBuilds)
     {
-        chdir(rel2abs(dir) ~ r"\");
+        chdir(rel2abs(dir) ~ `\`);
 
         if (cleanOnly)
         {
@@ -406,7 +396,7 @@ void buildProjectDirs(string[] dirs, bool cleanOnly = false)
 
                 if (res == 1 || res == -1)
                 {
-                    failedBuilds ~= rel2abs(curdir) ~ r"\.exe";
+                    failedBuilds ~= rel2abs(curdir) ~ `\.exe`;
                     errorMsgs ~= output;
                 }
             }
@@ -504,9 +494,11 @@ int main(string[] args)
 
     if (compiler == Compiler.GDC)
     {
-        if (system("perl.exe --help > nul 2>&1 ") != 0)
+        auto status = executeShell("perl.exe --help > nul 2>&1 ");
+
+        if (status.status != 0)
         {
-            writeln("Error: Couldn't invoke perl.exe. Perl is required to run the GDMD script, try installing Strawberry Perl: http://strawberryperl.com");
+            writefln("Error: Couldn't invoke perl.exe: %s. Perl is required to run the GDMD script, try installing Strawberry Perl: http://strawberryperl.com", status.output);
             return 0;
         }
     }
@@ -521,7 +513,7 @@ int main(string[] args)
     }
     else
     {
-        dirs = getProjectDirs(rel2abs(curdir ~ r"\Samples"));
+        dirs = getProjectDirs(rel2abs(curdir ~ `\Samples`));
     }
 
     if (!cleanOnly)
@@ -584,5 +576,5 @@ int main(string[] args)
 /** Remove std.path shenanigans */
 string getSafePath(string input)
 {
-    return input.chomp(r"\.");
+    return input.chomp(`\.`);
 }

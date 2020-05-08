@@ -22,12 +22,12 @@ auto toUTF16z(S)(S s)
 pragma(lib, "gdi32.lib");
 pragma(lib, "comdlg32.lib");
 pragma(lib, "winmm.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.commdlg;
-import win32.mmsystem;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
+import core.sys.windows.mmsystem;
 
 string appName     = "KBMidi";
 string description = "Keyboard MIDI Player";
@@ -37,13 +37,12 @@ extern (Windows)
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int iCmdShow)
 {
     int result;
-    void exceptionHandler(Throwable e) { throw e; }
 
     try
     {
-        Runtime.initialize(&exceptionHandler);
+        Runtime.initialize();
         result = myWinMain(hInstance, hPrevInstance, lpCmdLine, iCmdShow);
-        Runtime.terminate(&exceptionHandler);
+        Runtime.terminate();
     }
     catch (Throwable o)
     {
@@ -737,8 +736,8 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             TextOut(hdc, cxCaps, 1 * cyChar,
                     bOpened ? ("Open\0"w.dup.ptr) : ("Closed\0"w.dup.ptr),
                     bOpened ? 4 : 6);
-            
-                
+
+
             auto deviceName = to!string(fromWStringz(moc.szPname.ptr));
 
             TextOut(hdc, cxCaps, 2 * cyChar, deviceName.toUTF16z, deviceName.count);
@@ -755,7 +754,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             SendMessage(hwnd, WM_COMMAND, IDM_CLOSE, 0L);
             PostQuitMessage(0);
             return 0;
-        
+
         default:
     }
 

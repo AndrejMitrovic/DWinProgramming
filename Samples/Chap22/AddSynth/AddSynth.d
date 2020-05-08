@@ -25,12 +25,12 @@ auto toUTF16z(S)(S s)
 pragma(lib, "gdi32.lib");
 pragma(lib, "comdlg32.lib");
 pragma(lib, "winmm.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.commdlg;
-import win32.mmsystem;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
+import core.sys.windows.mmsystem;
 
 import resource;
 import WaveTable;
@@ -43,13 +43,12 @@ extern (Windows)
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int iCmdShow)
 {
     int result;
-    void exceptionHandler(Throwable e) { throw e; }
 
     try
     {
-        Runtime.initialize(&exceptionHandler);
+        Runtime.initialize();
         result = myWinMain(hInstance, hPrevInstance, lpCmdLine, iCmdShow);
-        Runtime.terminate(&exceptionHandler);
+        Runtime.terminate();
     }
     catch (Throwable o)
     {
@@ -92,7 +91,7 @@ VOID FillBuffer(INS ins, ref PBYTE pBuffer, int iNumSamples)
 {
     static double[MAX_PARTIALS] dAngle;
     dAngle[] = 0.0;
-    
+
     double dAmp, dFrq, dComp, dFrac;
     int i, iPrt, iMsecTime, iCompMaxAmp, iMaxAmp, iSmp;
 
@@ -184,7 +183,7 @@ BOOL MakeWaveFile(INS ins, string szFileName)
     }
 
     FillBuffer(ins, pBuffer, iNumSamples);
-    
+
     waveform.wFormatTag      = WAVE_FORMAT_PCM;
     waveform.nChannels       = 1;
     waveform.nSamplesPerSec  = SAMPLE_RATE;
@@ -198,7 +197,7 @@ BOOL MakeWaveFile(INS ins, string szFileName)
     string RIFF = "RIFF";
     string WAVEfmt = "WAVEfmt ";
     string DATA = "data";
-    
+
     WriteFile(hFile, cast(void*)(RIFF.toStringz), 4, &dwWritten, NULL);
     WriteFile(hFile, &iChunkSize, 4, &dwWritten, NULL);
     WriteFile(hFile, cast(void*)(WAVEfmt.toStringz), 8, &dwWritten, NULL);
@@ -281,7 +280,7 @@ BOOL DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                 case IDC_CLARINET:
                     PlaySound(szClar.toUTF16z, NULL, SND_FILENAME | SND_SYNC);
                     return TRUE;
-                
+
                 default:
             }
 
@@ -294,12 +293,12 @@ BOOL DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                 case SC_CLOSE:
                     EndDialog(hwnd, 0);
                     return TRUE;
-                
+
                 default:
             }
 
             break;
-            
+
         default:
     }
 

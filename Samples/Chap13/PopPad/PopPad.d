@@ -22,12 +22,12 @@ auto toUTF16z(S)(S s)
 pragma(lib, "gdi32.lib");
 pragma(lib, "comdlg32.lib");
 pragma(lib, "winmm.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.commdlg;
-import win32.mmsystem;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
+import core.sys.windows.mmsystem;
 
 import PopFile;
 import PopFind;
@@ -44,13 +44,12 @@ extern (Windows)
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int iCmdShow)
 {
     int result;
-    void exceptionHandler(Throwable e) { throw e; }
 
     try
     {
-        Runtime.initialize(&exceptionHandler);
+        Runtime.initialize();
         result = myWinMain(hInstance, hPrevInstance, lpCmdLine, iCmdShow);
-        Runtime.terminate(&exceptionHandler);
+        Runtime.terminate();
     }
     catch (Throwable o)
     {
@@ -113,7 +112,7 @@ int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int
                 DispatchMessage(&msg);
             }
         }
-    }    
+    }
     return msg.wParam;
 }
 
@@ -239,7 +238,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                     EnableMenuItem(cast(HMENU)wParam, IDM_SEARCH_NEXT, iEnable);
                     EnableMenuItem(cast(HMENU)wParam, IDM_SEARCH_REPLACE, iEnable);
                     break;
-                
+
                 default:
             }
 
@@ -261,7 +260,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                         MessageBox(hwnd, "Edit control out of space.",
                                    appName.toUTF16z, MB_OK | MB_ICONSTOP);
                         return 0;
-                    
+
                     default:
                 }
 
@@ -318,7 +317,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                             return 0;
                         }
                     }
-                    
+
                     goto case;
 
                 case IDM_FILE_SAVE_AS:
@@ -414,7 +413,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                 case IDM_APP_ABOUT:
                     DialogBox(hInst, "AboutBox", hwnd, &AboutDlgProc);
                     return 0;
-                
+
                 default:
             }
 
@@ -485,12 +484,12 @@ BOOL AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                 case IDOK:
                     EndDialog(hDlg, 0);
                     return TRUE;
-                
+
                 default:
             }
 
             break;
-            
+
         default:
     }
 

@@ -3,7 +3,7 @@ module Record1;
 /+
  + Note: This app was not properly tested.
  + I'd appreciate if someone could test this (& fix and pull?) and get back to me.
- + 
+ +
  + See README for contact details.
  +/
 
@@ -25,12 +25,12 @@ auto toUTF16z(S)(S s)
 pragma(lib, "gdi32.lib");
 pragma(lib, "comdlg32.lib");
 pragma(lib, "winmm.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.commdlg;
-import win32.mmsystem;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
+import core.sys.windows.mmsystem;
 
 import resource;
 
@@ -42,13 +42,12 @@ extern (Windows)
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int iCmdShow)
 {
     int result;
-    void exceptionHandler(Throwable e) { throw e; }
 
     try
     {
-        Runtime.initialize(&exceptionHandler);
+        Runtime.initialize();
         result = myWinMain(hInstance, hPrevInstance, lpCmdLine, iCmdShow);
-        Runtime.terminate(&exceptionHandler);
+        Runtime.terminate();
     }
     catch (Throwable o)
     {
@@ -194,7 +193,7 @@ BOOL DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                 case IDC_PLAY_REV:
                     // Reverse save buffer and play
                     bReverse = TRUE;
-                
+
                     auto arr = pSaveBuffer[0..dwDataLength];
                     reverse(arr);
 
@@ -225,7 +224,7 @@ BOOL DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                     }
 
                     return TRUE;
-                    
+
                 default:
             }
 
@@ -272,7 +271,7 @@ BOOL DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
 
             pSaveBuffer = pNewBuffer;
-            
+
             // this is broken
             pSaveBuffer[0 .. dwDataLength] = cast(ubyte[])((cast(PWAVEHDR)lParam).lpData)[0 .. (cast(PWAVEHDR)lParam).dwBytesRecorded];
 
@@ -404,12 +403,12 @@ BOOL DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
                     EndDialog(hwnd, 0);
                     return TRUE;
-                    
+
                 default:
             }
 
             break;
-            
+
         default:
     }
 

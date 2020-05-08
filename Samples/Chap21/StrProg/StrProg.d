@@ -16,11 +16,11 @@ auto toUTF16z(S)(S s)
 
 pragma(lib, "gdi32.lib");
 pragma(lib, "comdlg32.lib");
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
-import win32.commdlg;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
 
 import resource;
 import StrLib;
@@ -38,13 +38,12 @@ extern (Windows)
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int iCmdShow)
 {
     int result;
-    void exceptionHandler(Throwable e) { throw e; }
 
     try
     {
-        Runtime.initialize(&exceptionHandler);
+        Runtime.initialize();
         result = myWinMain(hInstance, hPrevInstance, lpCmdLine, iCmdShow);
-        Runtime.terminate(&exceptionHandler);
+        Runtime.terminate();
     }
     catch (Throwable o)
     {
@@ -140,10 +139,10 @@ BOOL DlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                 case IDCANCEL:
                     EndDialog(hDlg, FALSE);
                     return TRUE;
-                
+
                 default:
             }
-            
+
         default:
     }
 
@@ -169,7 +168,7 @@ void WriteStrings(string[] strings, CBPARAM pcbp)
 
 wstring fromWStringz(const wchar* s)
 {
-    if (s is null) 
+    if (s is null)
         return null;
 
     wchar* ptr;
@@ -226,7 +225,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                     }
 
                     break;
-                    
+
                 default:
             }
 

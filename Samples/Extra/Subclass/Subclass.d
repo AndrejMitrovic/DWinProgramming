@@ -12,10 +12,10 @@ import std.range;
 import std.string;
 import std.utf;
 
-import win32.windef;
-import win32.winuser;
-import win32.wingdi;
-import win32.winbase;
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
 
 import std.algorithm;
 import std.array;
@@ -29,7 +29,7 @@ import std.traits;
  * Demonstrates a Subclassed Button Control.
  * Right click to edit, left click on button
  * to exit edit mode.
- * 
+ *
  * Copyright © 2005-2006 Ken Fitlike.
  * http://winapi.foosyerdoos.org.uk/code/subsuperclass/htm/subclassbtn.php
  *
@@ -68,9 +68,9 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int i
 
     try
     {
-        Runtime.initialize(&exceptionHandler);
+        Runtime.initialize();
         result = myWinMain(hInstance, hPrevInstance, lpCmdLine, iCmdShow);
-        Runtime.terminate(&exceptionHandler);
+        Runtime.terminate();
     }
     catch (Throwable o)
     {
@@ -96,7 +96,7 @@ int myWinMain(HINSTANCE hInst, HINSTANCE, LPSTR pStr, int nCmd)
     wcx.cbSize      = WNDCLASSEX.sizeof;
     wcx.lpfnWndProc = &WndProc;           // wnd Procedure pointer
     wcx.hInstance   = hInst;              // app instance
-    
+
     // use 'LoadImage' to load wnd class icon and cursor as it supersedes the
     // obsolete functions 'LoadIcon' and 'LoadCursor', although these functions will
     // still work. Because the icon and cursor are loaded from system resources ie
@@ -167,7 +167,7 @@ LRESULT WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         default:
     }
-    
+
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
@@ -250,7 +250,7 @@ LRESULT BtnProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             writeln(wParam);
             break;
         }
-            
+
         case WM_LBUTTONDOWN:
         case WM_MBUTTONDOWN:
         case WM_LBUTTONDBLCLK:
@@ -276,7 +276,7 @@ LRESULT BtnProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         default:
     }
-    
+
     return CallWindowProc(OrigBtnProc, hwnd, uMsg, wParam, lParam);
 }
 
