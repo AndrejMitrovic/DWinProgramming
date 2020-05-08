@@ -55,7 +55,7 @@ enum NUM = 80;
 
 int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int iCmdShow)
 {
-    static int iKeep [NUM][4];
+    static int[4][NUM] iKeep;
     HDC hdcScr, hdcMem;
     int cx, cy;
     HBITMAP hBitmap;
