@@ -19,9 +19,7 @@ enum curdir = ".";
 
 alias std.path.absolutePath rel2abs;
 
-string[] RCINCLUDES = [`C:\Program Files\Microsoft SDKs\Windows\v7.1\Include`,
-                       `C:\Program Files\Microsoft Visual Studio 10.0\VC\include`,
-                       `C:\Program Files\Microsoft Visual Studio 10.0\VC\atlmfc\include`];
+string[] RCINCLUDES;
 
 extern(C) int kbhit();
 extern(C) int getch();
@@ -101,10 +99,11 @@ void checkTools()
         collectException(std.file.remove("test.res"));
     }
 
-    if (!skipResCompile && !RCINCLUDES.allExist)
+    if (!skipResCompile)
     {
-        auto includes = environment["RCINCLUDES"].split(";");
-        if (includes.allExist && includes.length == RCINCLUDES.length)
+        auto includes = environment.get("RCINCLUDES", `C:\Program Files\Microsoft SDKs\Windows\v7.1\Include;C:\Program Files\Microsoft Visual Studio 10.0\VC\include;C:\Program Files\Microsoft Visual Studio 10.0\VC\atlmfc\include`).split(";");
+
+        if (includes.allExist)
         {
             RCINCLUDES = includes;
             skipResCompile = false;
@@ -210,10 +209,7 @@ bool buildProject(string dir, out string errorMsg)
         {
             case Compiler.DMD:
             {
-                res_cmd = "cmd /c rc /i" ~ `"` ~ RCINCLUDES[0] ~ `"` ~
-                          " /i" ~ `"` ~ RCINCLUDES[1] ~ `"` ~
-                          " /i" ~ `"` ~ RCINCLUDES[2] ~ `"` ~
-                          " " ~ resources[0].stripExtension ~ ".rc";
+                res_cmd = "rc " ~ resources[0].stripExtension ~ ".rc";
                 break;
             }
 
@@ -246,8 +242,8 @@ bool buildProject(string dir, out string errorMsg)
     // get sources after any .h header files were converted to .d header files
     //~ auto sources   = dir.getFilesByExt(".d", "res");
     auto sources   = dir.getFilesByExt(".d", (compiler == Compiler.DMD)
-                                             ? "res"
-                                             : "o");
+                                             ? ".res"
+                                             : ".o");
     if (sources.length)
     {
         string cmd;

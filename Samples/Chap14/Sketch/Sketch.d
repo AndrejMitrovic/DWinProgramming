@@ -8,6 +8,7 @@ module Sketch;
 import core.memory;
 import core.runtime;
 import core.thread;
+import std.algorithm;
 import std.conv;
 import std.math;
 import std.range;

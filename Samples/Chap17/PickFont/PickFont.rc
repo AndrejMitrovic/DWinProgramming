@@ -7,7 +7,7 @@
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
-#include "afxres.h"
+#include "windows.h"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -27,18 +27,18 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE DISCARDABLE 
+1 TEXTINCLUDE DISCARDABLE
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE DISCARDABLE 
+2 TEXTINCLUDE DISCARDABLE
 BEGIN
     "#include ""afxres.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE DISCARDABLE 
+3 TEXTINCLUDE DISCARDABLE
 BEGIN
     "\r\n"
     "\0"
@@ -81,13 +81,13 @@ BEGIN
                     56,8
     CONTROL         "Logical Twips",IDC_MM_LOGTWIPS,"Button",
                     BS_AUTORADIOBUTTON,104,79,64,8
-    CONTROL         "Italic",IDC_LF_ITALIC,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Italic",IDC_LF_ITALIC,"Button",BS_AUTOCHECKBOX |
                     WS_TABSTOP,8,90,48,12
-    CONTROL         "Underline",IDC_LF_UNDER,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Underline",IDC_LF_UNDER,"Button",BS_AUTOCHECKBOX |
                     WS_TABSTOP,8,104,48,12
-    CONTROL         "Strike Out",IDC_LF_STRIKE,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Strike Out",IDC_LF_STRIKE,"Button",BS_AUTOCHECKBOX |
                     WS_TABSTOP,8,118,48,12
-    CONTROL         "Match Aspect",IDC_MATCH_ASPECT,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Match Aspect",IDC_MATCH_ASPECT,"Button",BS_AUTOCHECKBOX |
                     WS_TABSTOP,60,104,62,8
     CONTROL         "Adv Grfx Mode",IDC_ADV_GRAPHICS,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,60,118,62,8
@@ -202,7 +202,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO DISCARDABLE 
+GUIDELINES DESIGNINFO DISCARDABLE
 BEGIN
     "PICKFONT", DIALOG
     BEGIN
@@ -219,7 +219,7 @@ END
 // Menu
 //
 
-PICKFONT MENU DISCARDABLE 
+PICKFONT MENU DISCARDABLE
 BEGIN
     POPUP "&Device"
     BEGIN
