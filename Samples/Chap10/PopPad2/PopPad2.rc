@@ -7,7 +7,7 @@
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
-#include "afxres.h"
+#include "windows.h"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -27,18 +27,18 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE DISCARDABLE 
+1 TEXTINCLUDE DISCARDABLE
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE DISCARDABLE 
+2 TEXTINCLUDE DISCARDABLE
 BEGIN
     "#include ""afxres.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE DISCARDABLE 
+3 TEXTINCLUDE DISCARDABLE
 BEGIN
     "\r\n"
     "\0"
@@ -61,7 +61,7 @@ POPPAD2                 ICON    DISCARDABLE     "poppad2.ico"
 // Menu
 //
 
-POPPAD2 MENU DISCARDABLE 
+POPPAD2 MENU DISCARDABLE
 BEGIN
     POPUP "&File"
     BEGIN
@@ -98,7 +98,7 @@ END
 // Accelerator
 //
 
-POPPAD2 ACCELERATORS DISCARDABLE 
+POPPAD2 ACCELERATORS DISCARDABLE
 BEGIN
     VK_BACK,        IDM_EDIT_UNDO,          VIRTKEY, ALT, NOINVERT
     VK_DELETE,      IDM_EDIT_CLEAR,         VIRTKEY, NOINVERT
