@@ -174,7 +174,7 @@ int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int
         DispatchMessage(&msg);
     }
 
-    return msg.wParam;
+    return cast(int)msg.wParam;
 }
 
 extern(Windows)
@@ -215,16 +215,16 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 
             foreach (index, metric; sysMetrics)
             {
-                y = cyChar * (index - iVScrollPos);
+                y = cast(int)(cyChar * (index - cast(int)iVScrollPos));
 
-                TextOut(hdc, 0, y, metric.label.toUTF16z, metric.label.count);
-                TextOut(hdc, 22 * cxCaps, y, metric.desc.toUTF16z, metric.desc.count);
+                TextOut(hdc, 0, y, metric.label.toUTF16z, cast(int)metric.label.count);
+                TextOut(hdc, 22 * cxCaps, y, metric.desc.toUTF16z, cast(int)metric.desc.count);
 
                 string value = to!string(GetSystemMetrics(metric.index));
 
                 // right-align
                 SetTextAlign(hdc, TA_RIGHT | TA_TOP);
-                TextOut(hdc, 22 * cxCaps + 40 * cxChar, y, value.toUTF16z, value.count);
+                TextOut(hdc, 22 * cxCaps + 40 * cxChar, y, value.toUTF16z, cast(int)value.count);
 
                 // restore alignment
                 SetTextAlign(hdc, TA_LEFT | TA_TOP);
