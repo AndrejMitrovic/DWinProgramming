@@ -311,11 +311,10 @@ void buildProjectDirs(string[] dirs, bool cleanOnly = false)
     auto serialBuilds = dirs.filter!predicate;
     dirs = dirs.filter!(not!predicate).array;
 
-    __gshared string[] errorMsgs;
-
     if (cleanOnly)
         writeln("Cleaning.. ");
 
+    shared string[] errorMsgs;
     shared string[] failedBuilds;
     void buildDir(string dir)
     {
@@ -337,7 +336,7 @@ void buildProjectDirs(string[] dirs, bool cleanOnly = false)
             if (!buildProject(dir, /* out */ errorMsg))
             {
                 writefln("\nFail to build: %s\n%s", dir.relativePath(), errorMsg);
-                errorMsgs ~= errorMsg;
+                synchronized errorMsgs ~= errorMsg;
                 synchronized failedBuilds ~= dir.relativePath() ~ `\` ~ dir.baseName ~ ".exe";
             }
             else
@@ -406,7 +405,8 @@ void buildProjectDirs(string[] dirs, bool cleanOnly = false)
     }
 
     // todo: simpler way to pass shared..?
-    enforce(!failedBuilds.length, new FailedBuildException(failedBuilds.to!(string[]), errorMsgs));
+    enforce(!failedBuilds.length, new FailedBuildException(failedBuilds.to!(string[]),
+                                                           errorMsgs.to!(string[])));
 }
 
 import std.exception;
