@@ -4,18 +4,11 @@ import core.memory;
 import core.runtime;
 import core.thread;
 import core.stdc.config;
-//~ import std.concurrency;
 import std.conv;
 import std.math;
-//~ import std.random;
 import std.range;
 import std.string;
-import std.utf : count, toUTFz;
-
-auto toUTF16z(S)(S s)
-{
-    return toUTFz!(const(wchar)*)(s);
-}
+import std.utf : count, toUTFz, toUTF16z;
 
 pragma(lib, "gdi32.lib");
 pragma(lib, "comdlg32.lib");
@@ -26,10 +19,6 @@ import core.sys.windows.wingdi;
 import core.sys.windows.winbase;
 import core.sys.windows.commdlg;
 import core.sys.windows.mmsystem;
-
-//~ alias win32.winuser.MessageBox MessageBox;
-
-//~ import resource;
 
 string appName = "name";
 string description = "name";
