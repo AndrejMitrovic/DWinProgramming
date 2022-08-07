@@ -141,6 +141,7 @@ __gshared bool skipHeaderCompile;
 __gshared bool skipResCompile;
 __gshared bool silent;
 __gshared bool doRun;
+__gshared bool parallelBuilding;
 __gshared string win32lib;
 enum Compiler { DMD, GDC }
 __gshared Compiler compiler = Compiler.DMD;
@@ -349,13 +350,16 @@ void buildProjectDirs(string[] dirs, bool cleanOnly = false)
 
     // GDC has issues when called in parallel (something seems to lock gdc files)
     if (compiler == Compiler.GDC)
+        parallelBuilding = false;
+
+    if (parallelBuilding)
     {
-        foreach (dir; dirs)
+        foreach (dir; parallel(dirs, 1))
             buildDir(dir);
     }
     else
     {
-        foreach (dir; parallel(dirs, 1))
+        foreach (dir; dirs)
             buildDir(dir);
     }
 
@@ -468,6 +472,7 @@ int main(string[] args)
         else if (arg.toLower == "gdc") compiler = Compiler.GDC;
         else if (arg.toLower == "dmd") compiler = Compiler.DMD;
         else if (arg.toLower == "run") doRun = true;
+        else if (arg.toLower == "parallel") parallelBuilding = true;
         else
         if (arg.isFile && arg.extension == ".d")
         {
