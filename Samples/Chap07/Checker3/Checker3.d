@@ -156,7 +156,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 }
 
 extern (Windows)
-LRESULT ChildWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT ChildWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
     HDC hdc;
     PAINTSTRUCT ps;
