@@ -135,6 +135,7 @@ int main(string[] args)
     return 0;
 }
 
+// todo: recover resource compiling code (see first commit)
 string[] RCINCLUDES;
 
 bool allExist(string[] paths)
