@@ -1,3 +1,12 @@
+# Note: This project no longer builds as-is.
+
+There's been a lot of breaking changes in the D compiler in the last 10 years,
+since this project was initially created. The DMD linker is no longer Optlink
+by default (unless -m32omf is used), and the build scripts will need to be updated.
+
+Ideally this entire project would be dub-ified, made const-correct, and used
+utility libraries for things like instantiating COM objects.
+
 # DWinProgramming - D WinAPI programming
 This is a collection of samples from Charles Petzold's Programming Windows book,
 translated into the D programming language. It also contains a small collection
@@ -10,7 +19,7 @@ Project Homepage: https://github.com/AndrejMitrovic/DWinProgramming
 
 ## Building Requirements
 - Windows 7 or newer.
-- Compiler: [DMD] v2.091. Other compilers (ldc, gdc) will be supported soon.
+- Compiler: [DMD] v2.100.
 
 [DMD]: https://dlang.org/download.html
 
