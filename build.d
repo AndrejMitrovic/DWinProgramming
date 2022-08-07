@@ -352,6 +352,8 @@ void buildProjectDirs(string[] dirs, bool cleanOnly = false)
     if (compiler == Compiler.GDC)
         parallelBuilding = false;
 
+    writefln("Building %s samples..\n", dirs.count);
+
     if (parallelBuilding)
     {
         foreach (dir; parallel(dirs, 1))
