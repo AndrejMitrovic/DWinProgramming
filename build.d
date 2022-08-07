@@ -7,6 +7,7 @@ module build;
 import core.thread : Thread, dur;
 import std.algorithm;
 import std.array;
+import std.conv;
 import std.exception;
 import std.functional;
 import std.stdio;
@@ -301,8 +302,6 @@ void runApp(string dir)
 
 void buildProjectDirs(string[] dirs, bool cleanOnly = false)
 {
-    __gshared string[] failedBuilds;
-
     // @BUG@ Using chdir in parallel builds wreaks havoc on other threads.
     alias predicate = (dir) => dir.baseName == "EdrTest"
                               || dir.baseName == "ShowBit"
@@ -317,6 +316,7 @@ void buildProjectDirs(string[] dirs, bool cleanOnly = false)
     if (cleanOnly)
         writeln("Cleaning.. ");
 
+    shared string[] failedBuilds;
     void buildDir(string dir)
     {
         if (!cleanOnly && kbhit())
@@ -338,7 +338,7 @@ void buildProjectDirs(string[] dirs, bool cleanOnly = false)
             {
                 writefln("\nFail to build: %s\n%s", dir.relativePath(), errorMsg);
                 errorMsgs ~= errorMsg;
-                failedBuilds ~= dir.relativePath() ~ `\` ~ dir.baseName ~ ".exe";
+                synchronized failedBuilds ~= dir.relativePath() ~ `\` ~ dir.baseName ~ ".exe";
             }
             else
             {
@@ -405,7 +405,8 @@ void buildProjectDirs(string[] dirs, bool cleanOnly = false)
         }
     }
 
-    enforce(!failedBuilds.length, new FailedBuildException(failedBuilds, errorMsgs));
+    // todo: simpler way to pass shared..?
+    enforce(!failedBuilds.length, new FailedBuildException(failedBuilds.to!(string[]), errorMsgs));
 }
 
 import std.exception;
