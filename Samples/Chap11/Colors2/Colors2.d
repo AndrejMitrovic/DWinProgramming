@@ -123,8 +123,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 }
 
 extern (Windows)
-BOOL ColorScrDlg(HWND hDlg, UINT message,
-                 WPARAM wParam, LPARAM lParam)
+BOOL ColorScrDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
     static ubyte[3] iColor;
     HWND hwndParent, hCtrl;

@@ -50,7 +50,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int i
 int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int iCmdShow)
 {
     static CHOOSECOLOR cc;
-    static COLORREF crCustColors[16];
+    static COLORREF[16] crCustColors;
 
     cc.hwndOwner      = NULL;
     cc.hInstance      = NULL;

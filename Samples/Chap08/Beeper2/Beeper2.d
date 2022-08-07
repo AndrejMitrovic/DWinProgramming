@@ -99,11 +99,11 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
     switch (message)
     {
         case WM_CREATE:
-            SetTimer (hwnd, ID_TIMER, 1000, &TimerProc);
+            SetTimer(hwnd, ID_TIMER, 1000, &TimerProc);
             return 0;
 
         case WM_DESTROY:
-            KillTimer (hwnd, ID_TIMER);
+            KillTimer(hwnd, ID_TIMER);
             PostQuitMessage (0);
             return 0;
 
@@ -114,7 +114,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 }
 
 extern (Windows)
-void TimerProc(HWND hwnd, UINT message, UINT iTimerID, DWORD dwTime)
+void TimerProc(HWND hwnd, UINT message, UINT iTimerID, DWORD dwTime) nothrow
 {
     static BOOL fFlipFlop = FALSE;
     HBRUSH hBrush;

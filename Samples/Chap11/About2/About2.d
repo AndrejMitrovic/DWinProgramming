@@ -144,7 +144,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 }
 
 extern (Windows)
-BOOL AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+BOOL AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
     static HWND hCtrlBlock;
     static int  iColor, iFigure;
@@ -213,7 +213,7 @@ BOOL AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     return FALSE;
 }
 
-void PaintWindow(HWND hwnd, int iColor, int iFigure)
+void PaintWindow(HWND hwnd, int iColor, int iFigure) nothrow
 {
     auto crColor = [RGB(  0,   0, 0), RGB(  0,   0, 255),
                     RGB(  0, 255, 0), RGB(  0, 255, 255),
@@ -238,7 +238,7 @@ void PaintWindow(HWND hwnd, int iColor, int iFigure)
     ReleaseDC(hwnd, hdc);
 }
 
-void PaintTheBlock(HWND hCtrl, int iColor, int iFigure)
+void PaintTheBlock(HWND hCtrl, int iColor, int iFigure) nothrow
 {
     InvalidateRect(hCtrl, NULL, TRUE);
     UpdateWindow(hCtrl);

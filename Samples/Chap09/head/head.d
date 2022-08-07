@@ -11,14 +11,17 @@ module head;
 
 import core.runtime;
 import core.thread;
+import std.algorithm : count;
 import std.conv;
 import std.file;
 import std.math;
 import std.range;
+import std.path;
 import std.string;
-import std.utf : count, toUTFz, UTFException;
+import std.utf;
 
 pragma(lib, "gdi32.lib");
+import core.stdc.wchar_;
 import core.sys.windows.windef;
 import core.sys.windows.winuser;
 import core.sys.windows.wingdi;
@@ -183,7 +186,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
                 if (filename == "[..]")
                 {
                     bValidFile = false;
-                    SetCurrentDirectory((getcwd() ~ r"\..\").toUTF16z);
+                    SetCurrentDirectory((getcwd() ~ `\..\`).toUTF16z);
                     SetWindowText(hwndText, getcwd.toUTF16z);
                     SendMessage(hwndList, LB_RESETCONTENT, 0, 0);
                     SendMessage(hwndList, LB_DIR, DIRATTR, cast(LPARAM)"*.*".toUTF16z);
@@ -194,7 +197,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
                     if (filename[1] == '-')
                     {
                         // drive
-                        SetCurrentDirectory((filename[2 .. $-2].toUpper ~ r":\").toUTF16z);
+                        SetCurrentDirectory((filename[2 .. $-2].toUpper ~ `:\`).toUTF16z);
                         SetWindowText(hwndText, getcwd.toUTF16z);
                         SendMessage(hwndList, LB_RESETCONTENT, 0, 0);
                         SendMessage(hwndList, LB_DIR, DIRATTR, cast(LPARAM)"*.*".toUTF16z);
@@ -202,7 +205,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
                     else
                     {
                         // dir
-                        SetCurrentDirectory((getcwd ~ r"\" ~ filename[1 .. $-1]).toUTF16z);
+                        SetCurrentDirectory((getcwd ~ `\` ~ filename[1 .. $-1]).toUTF16z);
                         SetWindowText(hwndText, getcwd.toUTF16z);
                         SendMessage(hwndList, LB_RESETCONTENT, 0, 0);
                         SendMessage(hwndList, LB_DIR, DIRATTR, cast(LPARAM)"*.*".toUTF16z);

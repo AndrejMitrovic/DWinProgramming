@@ -13,6 +13,7 @@ module PoePoem;
 
 import core.runtime;
 import core.thread;
+static import std.algorithm;
 import std.algorithm : max, min;
 import std.conv;
 import std.math;

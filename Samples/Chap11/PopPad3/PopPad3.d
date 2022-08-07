@@ -152,8 +152,23 @@ wchar[MAX_PATH] szTitleName = 0;
 extern (Windows)
 LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
-    scope (failure) assert(0);
+    try
+    {
+        return WndProcImpl(hwnd, message, wParam, lParam);
+    }
+    catch (Throwable thr)
+    {
+        scope (failure) assert(0);
+        import std.stdio;
+        writeln(thr);
+        throw thr;
+    }
+}
 
+
+extern (Windows)
+LRESULT WndProcImpl(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
     static BOOL bNeedSave = FALSE;
     static HINSTANCE hInst;
     static HWND  hwndEdit;
@@ -465,7 +480,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 }
 
 extern (Windows)
-BOOL AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+BOOL AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
     switch (message)
     {

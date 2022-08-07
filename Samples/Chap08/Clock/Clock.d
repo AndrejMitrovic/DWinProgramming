@@ -121,7 +121,7 @@ void RotatePoint(POINT[] pt, int iNum, int iAngle)
 void DrawClock(HDC hdc)
 {
     int iAngle;
-    POINT pt[3];
+    POINT[3] pt;
 
     for (iAngle = 0; iAngle < 360; iAngle += 6)
     {
