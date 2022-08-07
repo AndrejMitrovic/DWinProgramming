@@ -335,14 +335,14 @@ void buildProjectDirs(string[] dirs, bool cleanOnly = false)
                 string errorMsg;
                 if (!buildProject(dir, /* out */ errorMsg))
                 {
-                    writefln("\nfail: %s\n%s", dir.relativePath(), errorMsg);
+                    writefln("\nFail to build: %s\n%s", dir.relativePath(), errorMsg);
                     errorMsgs ~= errorMsg;
                     failedBuilds ~= dir.relativePath() ~ `\` ~ dir.baseName ~ ".exe";
                 }
                 else
                 {
                     if (!silent)
-                        writeln("ok: " ~ dir.relativePath());
+                        writeln("Built ok: " ~ dir.relativePath());
                 }
             }
         }
