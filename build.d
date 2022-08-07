@@ -252,7 +252,7 @@ bool buildProject(string dir, out string errorMsg)
         {
             case Compiler.DMD:
             {
-                cmd = "dmd -of" ~ exeName ~
+                cmd = "dmd -m32omf -of" ~ exeName ~
                       " -od" ~ rel2abs(dir) ~ `\` ~
                       " -I" ~ LIBPATH ~ `\` ~
                       " " ~ LIBPATH ~ `\` ~ win32lib ~

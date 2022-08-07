@@ -20,4 +20,4 @@ goto :eof
 set FileName=%1
 set SourceFile=%2
 
-rdmd -g -w -L/SUBSYSTEM:WINDOWS:5.01 %versions% -Ilib %import_libs% -of%binPath%\%FileName%.exe %SourceFile%
+rdmd -m32omf -g -w -L/SUBSYSTEM:WINDOWS:5.01 %versions% -Ilib %import_libs% -of%binPath%\%FileName%.exe %SourceFile%
