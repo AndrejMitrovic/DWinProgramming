@@ -18,11 +18,6 @@ import std.range;
 import std.string;
 import std.utf : count, toUTFz, UTFException;
 
-auto toUTF16z(S)(S s)
-{
-    return toUTFz!(const(wchar)*)(s);
-}
-
 pragma(lib, "gdi32.lib");
 import core.sys.windows.windef;
 import core.sys.windows.winuser;

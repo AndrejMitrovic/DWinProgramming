@@ -37,11 +37,6 @@ wstring fromUTF16z(const wchar* s)
     return to!wstring(s[0..ptr-s]);
 }
 
-auto toUTF16z(S)(S s)
-{
-    return toUTFz!(const(wchar)*)(s);
-}
-
 struct ProcessInfo
 {
     HANDLE procHandle;

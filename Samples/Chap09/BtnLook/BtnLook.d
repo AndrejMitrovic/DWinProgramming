@@ -11,12 +11,7 @@ import std.conv;
 import std.math;
 import std.range;
 import std.string;
-import std.utf : count, toUTFz;
-
-auto toUTF16z(S)(S s)
-{
-    return toUTFz!(const(wchar)*)(s);
-}
+import std.utf : count, toUTFz, toUTF16z;
 
 pragma(lib, "gdi32.lib");
 import core.sys.windows.windef;

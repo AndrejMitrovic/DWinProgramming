@@ -52,11 +52,6 @@ import std.traits;
 // one. This technique can be used with win9x and later operating systems.
 // =============================================================================
 
-auto toUTF16z(S)(S s)
-{
-    return toUTFz!(const(wchar)*)(s);
-}
-
 extern (Windows)
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int iCmdShow)
 {

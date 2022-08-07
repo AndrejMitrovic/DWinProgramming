@@ -12,11 +12,6 @@ import std.math;
 import std.range;
 import std.string;
 import std.utf;
-
-auto toUTF16z(S)(S s)
-{
-    return toUTFz!(const(wchar)*)(s);
-}
 import std.windows.charset;
 
 pragma(lib, "gdi32.lib");

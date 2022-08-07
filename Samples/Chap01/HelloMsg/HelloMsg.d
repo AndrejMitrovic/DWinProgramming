@@ -8,11 +8,6 @@ module HelloMsg;
 import core.runtime;
 import std.utf;
 
-auto toUTF16z(S)(S s)
-{
-    return toUTFz!(const(wchar)*)(s);
-}
-
 import core.sys.windows.windef;
 import core.sys.windows.winuser;
 

@@ -8,11 +8,6 @@ module DibFile;
 import core.memory;
 import std.utf;
 
-auto toUTF16z(S)(S s)
-{
-    return toUTFz!(const(wchar)*)(s);
-}
-
 pragma(lib, "comdlg32.lib");
 import core.sys.windows.windef;
 import core.sys.windows.winuser;

@@ -14,11 +14,6 @@ import std.range;
 import std.string;
 import std.utf;
 
-auto toUTF16z(S)(S s)
-{
-    return toUTFz!(const(wchar)*)(s);
-}
-
 pragma(lib, "gdi32.lib");
 pragma(lib, "winspool.lib");
 
