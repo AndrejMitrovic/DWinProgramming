@@ -436,7 +436,7 @@ void buildProjectDirs(string[] dirs, bool cleanOnly = false)
             string errorMsg;
             if (!buildProject(dir, /* out */ errorMsg))
             {
-                writefln("\nFail to build: %s\n%s", dir.relativePath(), errorMsg);
+                writefln("Failed to build: %s\n%s", dir.relativePath(), errorMsg);
                 synchronized errorMsgs ~= errorMsg;
                 synchronized failedBuilds ~= dir.relativePath() ~ `\` ~ dir.baseName ~ ".exe";
             }
