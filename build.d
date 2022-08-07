@@ -19,8 +19,6 @@ import std.parallelism;
 
 enum curdir = ".";
 
-alias std.path.absolutePath rel2abs;
-
 string[] RCINCLUDES;
 
 extern(C) int kbhit();
@@ -184,8 +182,8 @@ string[] getProjectDirs(string root)
 
 bool buildProject(string dir, out string errorMsg)
 {
-    string appName = rel2abs(dir).baseName;
-    string exeName = rel2abs(dir) ~ `\` ~ appName ~ ".exe";
+    string appName = absolutePath(dir).baseName;
+    string exeName = absolutePath(dir) ~ `\` ~ appName ~ ".exe";
     string LIBPATH = ".";
 
     string debugFlags = "-IWindowsAPI -I. -version=Unicode -version=WindowsXP -d -g -w -wi";
@@ -208,7 +206,7 @@ bool buildProject(string dir, out string errorMsg)
     // have to clean .o files for GCC
     if (compiler == Compiler.GDC)
     {
-        executeShell("cmd /c del " ~ rel2abs(dir) ~ `\*.o > nul`);
+        executeShell("cmd /c del " ~ absolutePath(dir) ~ `\*.o > nul`);
     }
 
     if (resources.length)
@@ -247,7 +245,7 @@ bool buildProject(string dir, out string errorMsg)
     // @BUG@ htod can't output via -of or -od, causes multithreading issues.
     // We're distributing precompiled .d files now.
     //~ headers.length && executeShell("htod " ~ headers[0] ~ " " ~ `-IC:\dm\include`);
-    //~ headers.length && executeShell("copy resource.d " ~ rel2abs(dir) ~ `\resource.d > nul`);
+    //~ headers.length && executeShell("copy resource.d " ~ absolutePath(dir) ~ `\resource.d > nul`);
 
     // get sources after any .h header files were converted to .d header files
     //~ auto sources   = dir.getFilesByExt(".d", "res");
@@ -263,7 +261,7 @@ bool buildProject(string dir, out string errorMsg)
             case Compiler.DMD:
             {
                 cmd = "dmd -m32omf -of" ~ exeName ~
-                      " -od" ~ rel2abs(dir) ~ `\` ~
+                      " -od" ~ absolutePath(dir) ~ `\` ~
                       " -I" ~ LIBPATH ~ `\` ~
                       " " ~ LIBPATH ~ `\` ~ win32lib ~
                       " " ~ FLAGS ~
@@ -281,7 +279,7 @@ bool buildProject(string dir, out string errorMsg)
 
                 cmd = "gdmd.bat " ~ bitSwitch ~ " " ~ "-fignore-unknown-pragmas -mwindows -of"
                       ~ exeName
-                      ~ " -od" ~ rel2abs(dir) ~ `\`
+                      ~ " -od" ~ absolutePath(dir) ~ `\`
                       ~ " -Llibwinmm.a -Llibuxtheme.a -Llibcomctl32.a -Llibwinspool.a "
                       ~ "-Llibws2_32.a -Llibgdi32.a -I" ~ LIBPATH ~ `\`
                       ~ " " ~ LIBPATH ~ `\` ~ win32lib
@@ -304,8 +302,8 @@ bool buildProject(string dir, out string errorMsg)
 
 void runApp(string dir)
 {
-    string appName = rel2abs(dir).baseName;
-    string exeName = rel2abs(dir) ~ `\` ~ appName ~ ".exe";
+    string appName = absolutePath(dir).baseName;
+    string exeName = absolutePath(dir) ~ `\` ~ appName ~ ".exe";
     executeShell(exeName);
 }
 
@@ -375,7 +373,7 @@ void buildProjectDirs(string[] dirs, bool cleanOnly = false)
 
     foreach (dir; serialBuilds)
     {
-        chdir(rel2abs(dir) ~ `\`);
+        chdir(absolutePath(dir) ~ `\`);
 
         if (cleanOnly)
         {
@@ -406,7 +404,7 @@ void buildProjectDirs(string[] dirs, bool cleanOnly = false)
 
                 if (res == 1 || res == -1)
                 {
-                    failedBuilds ~= rel2abs(curdir) ~ `\.exe`;
+                    failedBuilds ~= absolutePath(curdir) ~ `\.exe`;
                     errorMsgs ~= output;
                 }
             }
@@ -522,13 +520,13 @@ int main(string[] args)
     if (soloProject.length)
     {
         silent = true;
-        dirs ~= getSafePath(rel2abs(soloProject));
+        dirs ~= getSafePath(absolutePath(soloProject));
         string dWinPath = findAbsolutePath(".", "DWinProgramming");
         chdir(dWinPath);
     }
     else
     {
-        dirs = getProjectDirs(rel2abs(curdir ~ `\Samples`));
+        dirs = getProjectDirs(absolutePath(curdir ~ `\Samples`));
     }
 
     if (!cleanOnly)
