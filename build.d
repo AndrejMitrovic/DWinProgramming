@@ -17,32 +17,125 @@ import std.file;
 import std.process;
 import std.parallelism;
 
-enum curdir = ".";
-
-string[] RCINCLUDES;
-
 extern(C) int kbhit();
 extern(C) int getch();
 
-class ForcedExitException : Exception
+int main(string[] args)
 {
-    this()
+    args.popFront;
+
+    foreach (arg; args)
     {
-        super("");
+        if (arg.toLower == "clean") cleanOnly = true;
+        else if (arg.toLower == "debug") Debug = true;
+        else if (arg.toLower == "gdc") compiler = Compiler.GDC;
+        else if (arg.toLower == "dmd") compiler = Compiler.DMD;
+        else if (arg.toLower == "run") doRun = true;
+        else if (arg.toLower == "parallel") parallelBuilding = true;
+        else
+        if (arg.isFile && arg.extension == ".d")
+        {
+            soloProject = dirName(arg);
+        }
+        else
+        {
+            if (arg.driveName.length)
+            {
+                if (arg.exists && arg.isDir)
+                {
+                    soloProject = arg;
+                }
+                else
+                    enforce(0, "Cannot build project in path: \"" ~ arg ~
+                              "\". Try wrapping %CD% with quotes when calling build: \"%CD%\"");
+            }
+        }
     }
+
+    if (compiler == Compiler.GDC)
+    {
+        auto status = executeShell("perl.exe --help > nul 2>&1 ");
+
+        if (status.status != 0)
+        {
+            writefln("Error: Couldn't invoke perl.exe: %s. Perl is required to run the "
+                ~ "GDMD script, try installing Strawberry Perl: http://strawberryperl.com",
+                status.output);
+            return 0;
+        }
+    }
+
+    string[] dirs;
+    if (soloProject.length)
+    {
+        silent = true;
+        dirs ~= getSafePath(absolutePath(soloProject));
+        string dWinPath = findAbsolutePath(".", "DWinProgramming");
+        chdir(dWinPath);
+    }
+    else
+    {
+        dirs = getProjectDirs(absolutePath("." ~ `\Samples`));
+    }
+
+    if (!cleanOnly)
+    {
+        checkTools();
+        checkWinLib();
+
+        if (!silent)
+        {
+            //~ writeln("About to build.");
+
+            // @BUG@ The RDMD bundled with DMD 2.053 has input handling bugs,
+            // wait for 2.054 to print this out. If you have RDMD from github,
+            // you can press 'q' during the build process to force exit.
+
+            //~ writeln("About to build. Press 'q' to stop the build process.");
+            //~ Thread.sleep(dur!("seconds")(2));
+        }
+    }
+
+    try
+    {
+        buildProjectDirs(dirs, cleanOnly);
+        if (soloProject.length && doRun)
+            runApp(dirs.front);
+    }
+    catch (ForcedExitException)
+    {
+        writeln("\nBuild process halted, about to clean..\n");
+        Thread.sleep(dur!("seconds")(1));
+        cleanOnly = true;
+        buildProjectDirs(dirs, cleanOnly);
+    }
+    catch (FailedBuildException exc)
+    {
+        if (soloProject.length)
+        {
+            writefln("%s failed to build.\n%s", exc.failedMods[0], exc.errorMsgs[0]);
+        }
+        else
+        {
+            writefln("\n\n%s projects failed to build:", exc.failedMods.length);
+            foreach (i, mod; exc.failedMods)
+            {
+                writeln(mod, exc.errorMsgs[i]);
+            }
+        }
+
+        return 1;
+    }
+
+    if (!cleanOnly && !silent)
+    {
+        writeln("\nAll examples succesfully built.");
+    }
+
+    return 0;
 }
 
-class FailedBuildException : Exception
-{
-    string[] failedMods;
-    string[] errorMsgs;
-    this(string[] failedModules, string[] errorMsgs)
-    {
-        this.failedMods = failedModules;
-        this.errorMsgs = errorMsgs;
-        super("");
-    }
-}
+string[] RCINCLUDES;
 
 bool allExist(string[] paths)
 {
@@ -404,7 +497,7 @@ void buildProjectDirs(string[] dirs, bool cleanOnly = false)
 
                 if (res == 1 || res == -1)
                 {
-                    failedBuilds ~= absolutePath(curdir) ~ `\.exe`;
+                    failedBuilds ~= absolutePath(".") ~ `\.exe`;
                     errorMsgs ~= output;
                 }
             }
@@ -414,41 +507,6 @@ void buildProjectDirs(string[] dirs, bool cleanOnly = false)
     // todo: simpler way to pass shared..?
     enforce(!failedBuilds.length, new FailedBuildException(failedBuilds.to!(string[]),
                                                            errorMsgs.to!(string[])));
-}
-
-import std.exception;
-
-class BuildException : Exception
-{
-    string errorMsg;
-    this(string msg)
-    {
-        errorMsg = msg;
-        super(msg);
-    }
-
-    this(string msg, string file, size_t line, Exception next = null)
-    {
-        errorMsg = msg;
-        super(msg, file, line, next);
-    }
-}
-
-string ExceptionImpl(string name)
-{
-    return(`
-    class ` ~ name ~ ` : BuildException
-    {
-        this(string msg)
-        {
-            super(msg);
-        }
-
-        this(string msg, string file, size_t line, Exception next = null)
-        {
-            super(msg, file, line, next);
-        }
-    }`);
 }
 
 string findAbsolutePath(string path, string input)
@@ -466,128 +524,28 @@ string findAbsolutePath(string path, string input)
     return result;
 }
 
-mixin(ExceptionImpl("CompilerError"));
-mixin(ExceptionImpl("ModuleException"));
-mixin(ExceptionImpl("ParseException"));
-mixin(ExceptionImpl("ProcessExecutionException"));
-
-int main(string[] args)
-{
-    args.popFront;
-
-    foreach (arg; args)
-    {
-        if (arg.toLower == "clean") cleanOnly = true;
-        else if (arg.toLower == "debug") Debug = true;
-        else if (arg.toLower == "gdc") compiler = Compiler.GDC;
-        else if (arg.toLower == "dmd") compiler = Compiler.DMD;
-        else if (arg.toLower == "run") doRun = true;
-        else if (arg.toLower == "parallel") parallelBuilding = true;
-        else
-        if (arg.isFile && arg.extension == ".d")
-        {
-            soloProject = dirName(arg);
-        }
-        else
-        {
-            if (arg.driveName.length)
-            {
-                if (arg.exists && arg.isDir)
-                {
-                    soloProject = arg;
-                }
-                else
-                    enforce(0, "Cannot build project in path: \"" ~ arg ~
-                              "\". Try wrapping %CD% with quotes when calling build: \"%CD%\"");
-            }
-        }
-    }
-
-    if (compiler == Compiler.GDC)
-    {
-        auto status = executeShell("perl.exe --help > nul 2>&1 ");
-
-        if (status.status != 0)
-        {
-            writefln("Error: Couldn't invoke perl.exe: %s. Perl is required to run the "
-                ~ "GDMD script, try installing Strawberry Perl: http://strawberryperl.com",
-                status.output);
-            return 0;
-        }
-    }
-
-    string[] dirs;
-    if (soloProject.length)
-    {
-        silent = true;
-        dirs ~= getSafePath(absolutePath(soloProject));
-        string dWinPath = findAbsolutePath(".", "DWinProgramming");
-        chdir(dWinPath);
-    }
-    else
-    {
-        dirs = getProjectDirs(absolutePath(curdir ~ `\Samples`));
-    }
-
-    if (!cleanOnly)
-    {
-        checkTools();
-        checkWinLib();
-
-        if (!silent)
-        {
-            //~ writeln("About to build.");
-
-            // @BUG@ The RDMD bundled with DMD 2.053 has input handling bugs,
-            // wait for 2.054 to print this out. If you have RDMD from github,
-            // you can press 'q' during the build process to force exit.
-
-            //~ writeln("About to build. Press 'q' to stop the build process.");
-            //~ Thread.sleep(dur!("seconds")(2));
-        }
-    }
-
-    try
-    {
-        buildProjectDirs(dirs, cleanOnly);
-        if (soloProject.length && doRun)
-            runApp(dirs.front);
-    }
-    catch (ForcedExitException)
-    {
-        writeln("\nBuild process halted, about to clean..\n");
-        Thread.sleep(dur!("seconds")(1));
-        cleanOnly = true;
-        buildProjectDirs(dirs, cleanOnly);
-    }
-    catch (FailedBuildException exc)
-    {
-        if (soloProject.length)
-        {
-            writefln("%s failed to build.\n%s", exc.failedMods[0], exc.errorMsgs[0]);
-        }
-        else
-        {
-            writefln("\n\n%s projects failed to build:", exc.failedMods.length);
-            foreach (i, mod; exc.failedMods)
-            {
-                writeln(mod, exc.errorMsgs[i]);
-            }
-        }
-
-        return 1;
-    }
-
-    if (!cleanOnly && !silent)
-    {
-        writeln("\nAll examples succesfully built.");
-    }
-
-    return 0;
-}
-
 /** Remove std.path shenanigans */
 string getSafePath(string input)
 {
     return input.chomp(`\.`);
+}
+
+class ForcedExitException : Exception
+{
+    this()
+    {
+        super("");
+    }
+}
+
+class FailedBuildException : Exception
+{
+    string[] failedMods;
+    string[] errorMsgs;
+    this(string[] failedModules, string[] errorMsgs)
+    {
+        this.failedMods = failedModules;
+        this.errorMsgs = errorMsgs;
+        super("");
+    }
 }
