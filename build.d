@@ -66,7 +66,8 @@ void checkWinLib()
                     ? "dmd_build.bat"
                     : "gdc_build.bat";
 
-    enforce(win32lib.exists, format("Not found: %s. You have to compile the WindowsAPI bindings first. Use the %s script in the win32 folder.", win32lib, buildScript));
+    enforce(win32lib.exists, format("Not found: %s. You have to compile the WindowsAPI bindings "
+        ~ "first. Use the %s script in the win32 folder.", win32lib, buildScript));
 }
 
 void checkTools()
@@ -94,7 +95,8 @@ void checkTools()
         if (res == -1 || res == 1)
         {
             skipResCompile = true;
-            writeln("Warning: RC Compiler not found. Builder will use precompiled resources. See README for more details.");
+            writeln("Warning: RC Compiler not found. Builder will use precompiled resources. "
+                ~ "See README for more details.");
         }
 
         collectException(std.file.remove("test.rc"));
@@ -103,7 +105,10 @@ void checkTools()
 
     if (!skipResCompile)
     {
-        auto includes = environment.get("RCINCLUDES", `C:\Program Files\Microsoft SDKs\Windows\v7.1\Include;C:\Program Files\Microsoft Visual Studio 10.0\VC\include;C:\Program Files\Microsoft Visual Studio 10.0\VC\atlmfc\include`).split(";");
+        auto includes = environment.get("RCINCLUDES",
+            `C:\Program Files\Microsoft SDKs\Windows\v7.1\Include;C:\Program Files\`
+            ~ `Microsoft Visual Studio 10.0\VC\include;C:\Program Files\`
+            ~ `Microsoft Visual Studio 10.0\VC\atlmfc\include`).split(";");
 
         if (includes.allExist)
         {
@@ -116,7 +121,8 @@ void checkTools()
 
     if (skipResCompile)
     {
-        writeln("Warning: RC Compiler Include dirs not found. Builder will will use precompiled resources.");
+        writeln("Warning: RC Compiler Include dirs not found. "
+            ~ "Builder will will use precompiled resources.");
     }
 
     writeln();
@@ -232,7 +238,8 @@ bool buildProject(string dir, out string errorMsg)
 
         if (res == -1 || res == 1)
         {
-            errorMsg = format("Compiling resource file failed.\nCommand was:\n%s\n\nError was:\n%s", res_cmd, output);
+            errorMsg = format("Compiling resource file failed.\nCommand was:\n%s\n\nError was:\n%s",
+                res_cmd, output);
             return false;
         }
     }
@@ -272,12 +279,14 @@ bool buildProject(string dir, out string errorMsg)
                 else
                     enum bitSwitch = "-m32";
 
-                cmd = "gdmd.bat " ~ bitSwitch ~ " " ~ "-fignore-unknown-pragmas -mwindows -of" ~ exeName ~
-                      " -od" ~ rel2abs(dir) ~ `\` ~
-                      " -Llibwinmm.a -Llibuxtheme.a -Llibcomctl32.a -Llibwinspool.a -Llibws2_32.a -Llibgdi32.a -I" ~ LIBPATH ~ `\` ~
-                      " " ~ LIBPATH ~ `\` ~ win32lib ~
-                      " " ~ FLAGS ~
-                      " " ~ sources.flatten;
+                cmd = "gdmd.bat " ~ bitSwitch ~ " " ~ "-fignore-unknown-pragmas -mwindows -of"
+                      ~ exeName
+                      ~ " -od" ~ rel2abs(dir) ~ `\`
+                      ~ " -Llibwinmm.a -Llibuxtheme.a -Llibcomctl32.a -Llibwinspool.a "
+                      ~ "-Llibws2_32.a -Llibgdi32.a -I" ~ LIBPATH ~ `\`
+                      ~ " " ~ LIBPATH ~ `\` ~ win32lib
+                      ~ " " ~ FLAGS
+                      ~ " " ~ sources.flatten;
                 break;
             }
         }
@@ -502,7 +511,9 @@ int main(string[] args)
 
         if (status.status != 0)
         {
-            writefln("Error: Couldn't invoke perl.exe: %s. Perl is required to run the GDMD script, try installing Strawberry Perl: http://strawberryperl.com", status.output);
+            writefln("Error: Couldn't invoke perl.exe: %s. Perl is required to run the "
+                ~ "GDMD script, try installing Strawberry Perl: http://strawberryperl.com",
+                status.output);
             return 0;
         }
     }
