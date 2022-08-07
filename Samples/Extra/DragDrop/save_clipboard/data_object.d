@@ -31,7 +31,7 @@ class DataObject : ComObject, IDataObject
     }
 
     extern (Windows)
-    override HRESULT QueryInterface(GUID* riid, void** ppv)
+    override HRESULT QueryInterface(const(GUID)* riid, void** ppv)
     {
         if (*riid == IID_IDataObject)
         {

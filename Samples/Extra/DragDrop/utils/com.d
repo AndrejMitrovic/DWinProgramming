@@ -1,5 +1,8 @@
 module utils.com;
 
+// note: a bunch of this code seems to have been taken from either VisualD's codebase
+// or from somewhere else.
+
 import core.atomic;
 import core.memory;
 import core.stdc.string;
@@ -8,6 +11,8 @@ import core.sys.windows.objidl;
 import core.sys.windows.ole2;
 import core.sys.windows.winbase;
 import core.sys.windows.windef;
+
+extern(C) void* gc_malloc(size_t sz, uint ba = 0, const TypeInfo ti=null);
 
 /**
     Create a global memory buffer and store text contents to it.
@@ -79,33 +84,21 @@ FORMATETC deepDupFormatEtc(FORMATETC source)
 /** Instantiate a COM class using the GC. */
 C newCom(C, T...)(T arguments)
 {
-	// avoid special casing in _d_newclass, where COM objects are not garbage collected
-	size_t size = C.classinfo.init.length;
-    void* p = GC.malloc(size, GC.BlkAttr.FINALIZE);
+    static assert(!__traits(isAbstractClass,C));
 
-	memcpy(p, C.classinfo.init.ptr, size);
-	C c = cast(C)p;
-
-	static if (arguments.length || __traits(compiles,c.__ctor(arguments)))
-		c.__ctor(arguments);
-
-	return c;
+    // avoid special casing in _d_newclass, where COM objects are not garbage collected
+    auto ini = typeid(C).initializer;
+    size_t size = ini.length;
+    void* p = gc_malloc(size, 1, typeid(C)); // BlkAttr.FINALIZE
+    memcpy(p, ini.ptr, size);
+    C c = cast(C) p;
+    static if(arguments.length || __traits(compiles,c.__ctor(arguments)))
+        c.__ctor(arguments);
+    return c;
 }
 
 abstract class ComObject : IUnknown
 {
-    /**
-        Note: See Issue 4092, COM objects are allocated in the
-        C heap instead of the GC:
-        http://d.puremagic.com/issues/show_bug.cgi?id=4092
-    */
-	@disable new(size_t size)
-	{
-        // should not be called because we don't have enough type info
-		assert(0);
-        // GC.malloc(size, GC.BlkAttr.FINALIZE);
-	}
-
     HRESULT QueryInterface(IID* riid, void** ppv)
 	{
 		if (*riid == IID_IUnknown)
