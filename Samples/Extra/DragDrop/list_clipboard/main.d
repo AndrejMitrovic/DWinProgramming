@@ -7,7 +7,7 @@ module list_clipboard.main;
 
 import core.runtime;
 
-import std.c.process;
+//import std.c.process;
 
 import std.algorithm;
 import std.conv;
@@ -107,7 +107,7 @@ void AddFormatListView(HWND hwndList, FORMATETC* pfmtetc)
     // Get textual name of format
     string name;
     char[64] namebuf = 0;
-    if (GetClipboardFormatName(pfmtetc.cfFormat, namebuf.ptr, 64) == 0)
+    if (GetClipboardFormatNameA(pfmtetc.cfFormat, namebuf.ptr, 64) == 0)
     {
         auto fmt = cliplook.find!(a => a.cfFormat == pfmtetc.cfFormat);
         if (fmt.empty)
@@ -126,7 +126,7 @@ void AddFormatListView(HWND hwndList, FORMATETC* pfmtetc)
     lvitem.mask     = LVIF_TEXT;
     lvitem.iSubItem = 0;
     lvitem.iItem    = nIndex;
-    lvitem.pszText  = name.toCharz;
+    lvitem.pszText  = cast(wchar*)name.toUTF16z;
 
     // add new row, and set format name (cfFormat)
     ListView_InsertItem(hwndList, &lvitem);
@@ -137,7 +137,7 @@ void AddFormatListView(HWND hwndList, FORMATETC* pfmtetc)
         ptd = format("%08x", pfmtetc.ptd);
 
     // set the subitem
-    ListView_SetItemText(hwndList, nIndex, 1, ptd.toCharz);
+    ListView_SetItemText(hwndList, nIndex, 1, cast(wchar*)ptd.toUTF16z);
 
     // Add DVASPECT_xxx constant
     string aspect;
@@ -147,10 +147,10 @@ void AddFormatListView(HWND hwndList, FORMATETC* pfmtetc)
     else
         aspect = aspectRng.front.name;
 
-    ListView_SetItemText(hwndList, nIndex, 2, aspect.toCharz);
+    ListView_SetItemText(hwndList, nIndex, 2, cast(wchar*)aspect.toUTF16z);
 
     // Add lindex value
-    ListView_SetItemText(hwndList, nIndex, 3, pfmtetc.lindex.to!string.toCharz);
+    ListView_SetItemText(hwndList, nIndex, 3, cast(wchar*)pfmtetc.lindex.to!string.toUTF16z);
 
     // Add TYMED value(s)
     string[] tymedArr;
@@ -171,7 +171,7 @@ void AddFormatListView(HWND hwndList, FORMATETC* pfmtetc)
         }
     }
 
-    ListView_SetItemText(hwndList, nIndex, 4, tymedArr.join(", ").toCharz);
+    ListView_SetItemText(hwndList, nIndex, 4, cast(wchar*)tymedArr.join(", ").toUTF16z);
 }
 
 /** Create the list view and the columns. */
@@ -186,29 +186,29 @@ HWND CreateListView(HWND hwndParent)
 
     width -= GetSystemMetrics(SM_CXVSCROLL);
 
-    lvcol.pszText  = "cfFormat".toCharz;
+    lvcol.pszText  = cast(wchar*)"cfFormat".toUTF16z;
     lvcol.mask     = LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
     lvcol.cx       = 164;
     lvcol.iSubItem = 0;
     ListView_InsertColumn(hwndList, 0, &lvcol);
     width -= lvcol.cx;
 
-    lvcol.pszText = "ptd".toCharz;
+    lvcol.pszText = cast(wchar*)"ptd".toUTF16z;
     lvcol.cx      = 54;
     ListView_InsertColumn(hwndList, 1, &lvcol);
     width -= lvcol.cx;
 
-    lvcol.pszText = "dwAspect".toCharz;
+    lvcol.pszText = cast(wchar*)"dwAspect".toUTF16z;
     lvcol.cx      = 90;
     ListView_InsertColumn(hwndList, 2, &lvcol);
     width -= lvcol.cx;
 
-    lvcol.pszText = "lindex".toCharz;
+    lvcol.pszText = cast(wchar*)"lindex".toUTF16z;
     lvcol.cx      = 68;
     ListView_InsertColumn(hwndList, 3, &lvcol);
     width -= lvcol.cx;
 
-    lvcol.pszText = "tymed".toCharz;
+    lvcol.pszText = cast(wchar*)"tymed".toUTF16z;
     lvcol.cx      = max(120, width + 1);
     ListView_InsertColumn(hwndList, 4, &lvcol);
     width -= lvcol.cx;
@@ -216,8 +216,9 @@ HWND CreateListView(HWND hwndParent)
     return hwndList;
 }
 
-extern (Windows) LRESULT WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+extern (Windows) LRESULT WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) nothrow
 {
+    scope (failure) assert(0);
     HICON hIcon;
 
     switch (msg)
@@ -247,9 +248,9 @@ extern (Windows) LRESULT WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 
                 case IDM_FILE_ABOUT:
                     MessageBox(hwnd, "IDataObject Viewer\r\n\r\n"
-                               "Copyright(c) 2003 by Catch22 Productions\t\r\n"
-                               "Written by J Brown.\r\n\r\n"
-                               "Homepage at www.catch22.net", APPNAME, MB_ICONINFORMATION);
+                               ~ "Copyright(c) 2003 by Catch22 Productions\t\r\n"
+                               ~ "Written by J Brown.\r\n\r\n"
+                               ~ "Homepage at www.catch22.net", APPNAME, MB_ICONINFORMATION);
                     return 0;
 
                 case IDM_FILE_CLIP:
@@ -292,7 +293,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int i
     }
     catch (Throwable o)
     {
-        MessageBox(null, o.toString().toStringz, "Error", MB_OK | MB_ICONEXCLAMATION);
+        MessageBox(null, o.toString().toUTF16z, "Error", MB_OK | MB_ICONEXCLAMATION);
         result = 0;
     }
 
