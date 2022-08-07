@@ -452,7 +452,7 @@ void buildProjectDirs(string[] dirs, bool cleanOnly = false)
     if (compiler == Compiler.GDC)
         parallelBuilding = false;
 
-    writefln("Building %s samples..\n", dirs.count);
+    writefln("Building %s samples..\n", dirs.count + serialBuilds.count);
 
     if (parallelBuilding)
     {
