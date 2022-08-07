@@ -8,6 +8,7 @@ import core.thread : Thread, dur;
 import std.algorithm;
 import std.array;
 import std.exception;
+import std.functional;
 import std.stdio;
 import std.string;
 import std.path;
@@ -301,7 +302,16 @@ void runApp(string dir)
 void buildProjectDirs(string[] dirs, bool cleanOnly = false)
 {
     __gshared string[] failedBuilds;
-    __gshared string[] serialBuilds;
+
+    // @BUG@ Using chdir in parallel builds wreaks havoc on other threads.
+    alias predicate = (dir) => dir.baseName == "EdrTest"
+                              || dir.baseName == "ShowBit"
+                              || dir.baseName == "StrProg";
+
+    // isn't there an easier way to do this, via predicate or splitter or something..?
+    auto serialBuilds = dirs.filter!predicate;
+    dirs = dirs.filter!(not!predicate).array;
+
     __gshared string[] errorMsgs;
 
     if (cleanOnly)
@@ -316,34 +326,24 @@ void buildProjectDirs(string[] dirs, bool cleanOnly = false)
             enforce(key != 'q', new ForcedExitException);
         }
 
-        // @BUG@ Using chdir in parallel builds wreaks havoc on other threads.
-        if (dir.baseName == "EdrTest" ||
-            dir.baseName == "ShowBit" ||
-            dir.baseName == "StrProg")
+        if (cleanOnly)
         {
-            serialBuilds ~= dir;
+            executeShell("cmd /c del " ~ dir ~ `\` ~ "*.obj > nul");
+            executeShell("cmd /c del " ~ dir ~ `\` ~ "*.exe > nul");
         }
         else
         {
-            if (cleanOnly)
+            string errorMsg;
+            if (!buildProject(dir, /* out */ errorMsg))
             {
-                executeShell("cmd /c del " ~ dir ~ `\` ~ "*.obj > nul");
-                executeShell("cmd /c del " ~ dir ~ `\` ~ "*.exe > nul");
+                writefln("\nFail to build: %s\n%s", dir.relativePath(), errorMsg);
+                errorMsgs ~= errorMsg;
+                failedBuilds ~= dir.relativePath() ~ `\` ~ dir.baseName ~ ".exe";
             }
             else
             {
-                string errorMsg;
-                if (!buildProject(dir, /* out */ errorMsg))
-                {
-                    writefln("\nFail to build: %s\n%s", dir.relativePath(), errorMsg);
-                    errorMsgs ~= errorMsg;
-                    failedBuilds ~= dir.relativePath() ~ `\` ~ dir.baseName ~ ".exe";
-                }
-                else
-                {
-                    if (!silent)
-                        writeln("Built ok: " ~ dir.relativePath());
-                }
+                if (!silent)
+                    writeln("Built ok: " ~ dir.relativePath());
             }
         }
     }
