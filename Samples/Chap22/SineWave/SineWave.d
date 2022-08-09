@@ -10,6 +10,7 @@ import core.runtime;
 import core.thread;
 import std.algorithm : max, min;
 import std.conv;
+import std.exception;
 import std.math;
 import std.range;
 import std.string;
@@ -68,7 +69,7 @@ enum FREQ_MAX        =  5000;
 enum FREQ_INIT       =   440;
 enum OUT_BUFFER_SIZE =  4096;
 
-VOID FillBuffer(ref char* pBuffer, int iFreq)
+VOID FillBuffer(ref char* pBuffer, int iFreq) nothrow
 {
     static double fAngle = 0.0;
 
@@ -83,7 +84,7 @@ VOID FillBuffer(ref char* pBuffer, int iFreq)
     }
 }
 
-VOID FillBuffer(ref ubyte[] pBuffer, int iFreq)
+VOID FillBuffer(ref ubyte[] pBuffer, int iFreq) nothrow
 {
     static double fAngle = 0.0;
 
@@ -99,7 +100,7 @@ VOID FillBuffer(ref ubyte[] pBuffer, int iFreq)
 }
 
 extern (Windows)
-BOOL DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+BOOL DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
     static BOOL bShutOff, bClosing;
     static HWAVEOUT hWaveOut;
@@ -190,7 +191,7 @@ BOOL DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                             MessageBeep(MB_ICONEXCLAMATION);
                             MessageBox(hwnd,
                                        "Error opening waveform audio device!",
-                                       appName.toUTF16z, MB_ICONEXCLAMATION | MB_OK);
+                                       assumeWontThrow(appName.toUTF16z), MB_ICONEXCLAMATION | MB_OK);
                             return TRUE;
                         }
 

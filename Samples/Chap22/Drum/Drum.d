@@ -503,7 +503,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 }
 
 extern (Windows)
-BOOL AboutProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+BOOL AboutProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
     switch (message)
     {

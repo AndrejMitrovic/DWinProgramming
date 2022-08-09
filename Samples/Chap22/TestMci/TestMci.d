@@ -9,6 +9,7 @@ import core.memory;
 import core.runtime;
 import core.thread;
 import std.conv;
+import std.exception;
 import std.math;
 import std.range;
 import std.string;
@@ -63,7 +64,7 @@ int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int
 enum ID_TIMER = 1;
 
 extern (Windows)
-BOOL DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+BOOL DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
     static HWND hwndEdit;
     int iCharBeg, iCharEnd, iLineBeg, iLineEnd, iChar, iLine, iLength;
@@ -145,7 +146,7 @@ BOOL DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                     if (HIWORD(wParam) == EN_ERRSPACE)
                     {
                         MessageBox(hwnd, "Error control out of space.",
-                                   appName.toUTF16z, MB_OK | MB_ICONINFORMATION);
+                                   assumeWontThrow(appName.toUTF16z), MB_OK | MB_ICONINFORMATION);
                         return TRUE;
                     }
 
@@ -159,8 +160,8 @@ BOOL DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         case MM_MCINOTIFY:
             EnableWindow(GetDlgItem(hwnd, IDC_NOTIFY_MESSAGE), TRUE);
 
-            szBuffer = format("Device ID = %s", lParam);
-            SetDlgItemText(hwnd, IDC_NOTIFY_ID, szBuffer.toUTF16z);
+            szBuffer = assumeWontThrow(format("Device ID = %s", lParam));
+            SetDlgItemText(hwnd, IDC_NOTIFY_ID, assumeWontThrow(szBuffer.toUTF16z));
             EnableWindow(GetDlgItem(hwnd, IDC_NOTIFY_ID), TRUE);
 
             EnableWindow(GetDlgItem(hwnd, IDC_NOTIFY_SUCCESSFUL),
