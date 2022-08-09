@@ -11,6 +11,7 @@ import core.thread;
 import std.algorithm : max, min;
 import std.concurrency;
 import std.conv;
+import std.exception;
 import std.math;
 import std.random;
 import std.range;
@@ -26,8 +27,6 @@ import core.sys.windows.wingdi;
 import core.sys.windows.winbase;
 import core.sys.windows.commdlg;
 import core.sys.windows.mmsystem;
-
-alias win32.winuser.MessageBox MessageBox;
 
 string appName     = "Multi2";
 string description = "Multitasking Demo";
@@ -161,14 +160,14 @@ void Thread1()
 }
 
 extern (Windows)
-LRESULT WndProc1(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc1(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
     switch (message)
     {
         case WM_CREATE:
             params1.hwnd   = hwnd;
             params1.cyChar = HIWORD(GetDialogBaseUnits());
-            spawn(&Thread1);
+            assumeWontThrow(spawn(&Thread1));
             return 0;
 
         case WM_SIZE:
@@ -223,14 +222,14 @@ void Thread2()
 }
 
 extern (Windows)
-LRESULT WndProc2(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc2(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
     switch (message)
     {
         case WM_CREATE:
             params2.hwnd   = hwnd;
             params2.cyChar = HIWORD(GetDialogBaseUnits());
-            spawn(&Thread2);
+            assumeWontThrow(spawn(&Thread2));
             return 0;
 
         case WM_SIZE:
@@ -280,14 +279,14 @@ void Thread3()
 }
 
 extern (Windows)
-LRESULT WndProc3(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc3(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
     switch (message)
     {
         case WM_CREATE:
             params3.hwnd   = hwnd;
             params3.cyChar = HIWORD(GetDialogBaseUnits());
-            spawn(&Thread3);
+            assumeWontThrow(spawn(&Thread3));
             return 0;
 
         case WM_SIZE:
@@ -331,14 +330,14 @@ void Thread4()
 }
 
 extern (Windows)
-LRESULT WndProc4(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc4(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
     switch (message)
     {
         case WM_CREATE:
             params4.hwnd   = hwnd;
             params4.cyChar = HIWORD(GetDialogBaseUnits());
-            spawn(&Thread4);
+            assumeWontThrow(spawn(&Thread4));
             return 0;
 
         case WM_SIZE:
