@@ -9,6 +9,7 @@ import core.memory;
 import core.runtime;
 import core.thread;
 import std.conv;
+import std.exception;
 import std.math;
 import std.range;
 import std.string;
@@ -101,13 +102,12 @@ int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int
 }
 
 extern (Windows)
-BOOL PrintDlgProc(HWND hDlg, UINT message,
-                  WPARAM wParam, LPARAM lParam)
+BOOL PrintDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
     switch (message)
     {
         case WM_INITDIALOG:
-            SetWindowText(hDlg, appName.toUTF16z);
+            SetWindowText(hDlg, assumeWontThrow(appName.toUTF16z));
             EnableMenuItem(GetSystemMenu(hDlg, FALSE), SC_CLOSE, MF_GRAYED);
             return TRUE;
 
