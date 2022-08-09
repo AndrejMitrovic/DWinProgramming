@@ -111,11 +111,7 @@ int main(string[] args)
     }
     catch (FailedBuildException exc)
     {
-        if (soloProject.length)
-        {
-            writefln("%s failed to build.\n%s", exc.failedMods[0], exc.errorMsgs[0]);
-        }
-        else
+        if (!soloProject.length)  // solo already logged once, no need to repeat
         {
             writefln("\n\n%s projects failed to build:", exc.failedMods.length);
             foreach (i, mod; exc.failedMods)
@@ -437,14 +433,14 @@ void buildProjectDirs(string[] dirs, bool cleanOnly = false)
             string errorMsg;
             if (!buildProject(dir, /* out */ errorMsg))
             {
-                writefln("Failed to build: %s\n%s", dir.relativePath(), errorMsg);
+                synchronized writefln("Failed to build: %s\n%s", dir.relativePath(), errorMsg);
                 synchronized errorMsgs ~= errorMsg;
                 synchronized failedBuilds ~= dir.relativePath() ~ `\` ~ dir.baseName ~ ".exe";
             }
             else
             {
                 if (!silent)
-                    writeln("Built ok: " ~ dir.relativePath());
+                    synchronized writeln("Built ok: " ~ dir.relativePath());
             }
         }
     }
