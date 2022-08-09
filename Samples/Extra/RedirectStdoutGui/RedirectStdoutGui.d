@@ -38,6 +38,7 @@ import std.algorithm;
 import std.array;
 import std.stdio;
 import std.conv;
+import std.process;
 import std.typetuple;
 import std.typecons;
 import std.traits;
@@ -292,7 +293,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int i
     }
     catch(Throwable o)
     {
-        win32.winuser.MessageBox(null, o.toString().toUTF16z, "Error", MB_OK | MB_ICONEXCLAMATION);
+        MessageBox(null, o.toString().toUTF16z, "Error", MB_OK | MB_ICONEXCLAMATION);
         result = 0;
     }
 
@@ -306,11 +307,11 @@ int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int
         import std.file;
         import std.exception;
 
-        string path = buildPath(".".absolutePath, r"Samples\Extra\RedirectStdoutGui\subprocess");
+        string path = buildPath(".".absolutePath, `subprocess`);
         enforce(path.exists, path);
         chdir(path);
-        system(`..\..\..\..\build.exe "%CD%"`);
-        chdir(r"..\");
+        executeShell(`rdmd ..\..\..\..\build.d "%CD%"`);
+        chdir(`..\`);
     }
 
     string appName = "HelloWin";
@@ -331,7 +332,7 @@ int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int
 
     if(!RegisterClass(&wndclass))
     {
-        win32.winuser.MessageBox(NULL, "This program requires Windows NT!", appName.toUTF16z, MB_ICONERROR);
+        MessageBox(NULL, "This program requires Windows NT!", appName.toUTF16z, MB_ICONERROR);
         return 0;
     }
 
