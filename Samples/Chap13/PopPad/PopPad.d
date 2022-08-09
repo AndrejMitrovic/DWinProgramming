@@ -467,7 +467,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 }
 
 extern (Windows)
-BOOL AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+BOOL AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
     switch (message)
     {

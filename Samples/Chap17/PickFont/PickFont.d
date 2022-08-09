@@ -10,6 +10,7 @@ import core.runtime;
 import core.thread;
 import std.algorithm : max, min;
 import std.conv;
+import std.exception;
 import std.math;
 import std.range;
 import std.string;
@@ -194,7 +195,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 }
 
 extern (Windows)
-BOOL DlgProc(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam)
+BOOL DlgProc(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
     static DLGPARAMS* pdp;
     static PRINTDLG pd = PRINTDLG(PRINTDLG.sizeof);
@@ -240,25 +241,26 @@ BOOL DlgProc(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam)
             switch (LOWORD(wParam))
             {
                 case IDC_CHARSET_HELP:
+                    auto appNameUTF = assumeWontThrow(appName.toUTF16z);
                     MessageBox(hdlg,
                                "0 = Ansi\n"
-                               "1 = Default\n"
-                               "2 = Symbol\n"
-                               "128 = Shift JIS (Japanese)\n"
-                               "129 = Hangul (Korean)\n"
-                               "130 = Johab (Korean)\n"
-                               "134 = GB 2312 (Simplified Chinese)\n"
-                               "136 = Chinese Big 5 (Traditional Chinese)\n"
-                               "177 = Hebrew\n"
-                               "178 = Arabic\n"
-                               "161 = Greek\n"
-                               "162 = Turkish\n"
-                               "163 = Vietnamese\n"
-                               "204 = Russian\n"
-                               "222 = Thai\n"
-                               "238 = East European\n"
-                               "255 = OEM",
-                               appName.toUTF16z, MB_OK | MB_ICONINFORMATION);
+                               ~ "1 = Default\n"
+                               ~ "2 = Symbol\n"
+                               ~ "128 = Shift JIS (Japanese)\n"
+                               ~ "129 = Hangul (Korean)\n"
+                               ~ "130 = Johab (Korean)\n"
+                               ~ "134 = GB 2312 (Simplified Chinese)\n"
+                               ~ "136 = Chinese Big 5 (Traditional Chinese)\n"
+                               ~ "177 = Hebrew\n"
+                               ~ "178 = Arabic\n"
+                               ~ "161 = Greek\n"
+                               ~ "162 = Turkish\n"
+                               ~ "163 = Vietnamese\n"
+                               ~ "204 = Russian\n"
+                               ~ "222 = Thai\n"
+                               ~ "238 = East European\n"
+                               ~ "255 = OEM",
+                               appNameUTF, MB_OK | MB_ICONINFORMATION);
                     return TRUE;
 
                 // These radio buttons set the lfOutPrecision field
@@ -442,7 +444,7 @@ BOOL DlgProc(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam)
     return FALSE;
 }
 
-void SetLogFontFromFields(HWND hdlg, DLGPARAMS* pdp)
+void SetLogFontFromFields(HWND hdlg, DLGPARAMS* pdp) nothrow
 {
     pdp.lf.lfHeight      = GetDlgItemInt(hdlg, IDC_LF_HEIGHT,  NULL, TRUE);
     pdp.lf.lfWidth       = GetDlgItemInt(hdlg, IDC_LF_WIDTH,   NULL, TRUE);
@@ -461,7 +463,7 @@ void SetLogFontFromFields(HWND hdlg, DLGPARAMS* pdp)
     GetDlgItemText(hdlg, IDC_LF_FACENAME, pdp.lf.lfFaceName.ptr, LF_FACESIZE);
 }
 
-void SetFieldsFromTextMetric(HWND hdlg, DLGPARAMS* pdp)
+void SetFieldsFromTextMetric(HWND hdlg, DLGPARAMS* pdp) nothrow
 {
     string szBuffer;
     TCHAR* szYes = ("Yes\0"w.dup.ptr);
@@ -481,17 +483,17 @@ void SetFieldsFromTextMetric(HWND hdlg, DLGPARAMS* pdp)
     SetDlgItemInt(hdlg, IDC_TM_DIGASPX,  pdp.tm.tmDigitizedAspectX, TRUE);
     SetDlgItemInt(hdlg, IDC_TM_DIGASPY,  pdp.tm.tmDigitizedAspectY, TRUE);
 
-    szBuffer = format(BCHARFORM, pdp.tm.tmFirstChar);
-    SetDlgItemText(hdlg, IDC_TM_FIRSTCHAR, szBuffer.toUTF16z);
+    szBuffer = assumeWontThrow(format(BCHARFORM, pdp.tm.tmFirstChar));
+    SetDlgItemText(hdlg, IDC_TM_FIRSTCHAR, assumeWontThrow(szBuffer.toUTF16z));
 
-    szBuffer = format(BCHARFORM, pdp.tm.tmLastChar);
-    SetDlgItemText(hdlg, IDC_TM_LASTCHAR, szBuffer.toUTF16z);
+    szBuffer = assumeWontThrow(format(BCHARFORM, pdp.tm.tmLastChar));
+    SetDlgItemText(hdlg, IDC_TM_LASTCHAR, assumeWontThrow(szBuffer.toUTF16z));
 
-    szBuffer = format(BCHARFORM, pdp.tm.tmDefaultChar);
-    SetDlgItemText(hdlg, IDC_TM_DEFCHAR, szBuffer.toUTF16z);
+    szBuffer = assumeWontThrow(format(BCHARFORM, pdp.tm.tmDefaultChar));
+    SetDlgItemText(hdlg, IDC_TM_DEFCHAR, assumeWontThrow(szBuffer.toUTF16z));
 
-    szBuffer = format(BCHARFORM, pdp.tm.tmBreakChar);
-    SetDlgItemText(hdlg, IDC_TM_BREAKCHAR, szBuffer.toUTF16z);
+    szBuffer = assumeWontThrow(format(BCHARFORM, pdp.tm.tmBreakChar));
+    SetDlgItemText(hdlg, IDC_TM_BREAKCHAR, assumeWontThrow(szBuffer.toUTF16z));
 
     SetDlgItemText(hdlg, IDC_TM_ITALIC, pdp.tm.tmItalic     ? szYes : szNo);
     SetDlgItemText(hdlg, IDC_TM_UNDER,  pdp.tm.tmUnderlined ? szYes : szNo);
@@ -510,13 +512,13 @@ void SetFieldsFromTextMetric(HWND hdlg, DLGPARAMS* pdp)
                    TMPF_DEVICE & pdp.tm.tmPitchAndFamily ? szYes : szNo);
 
     SetDlgItemText(hdlg, IDC_TM_FAMILY,
-                   szFamily[min(6, pdp.tm.tmPitchAndFamily >> 4)].toUTF16z);
+                   assumeWontThrow(szFamily[min(6, pdp.tm.tmPitchAndFamily >> 4)].toUTF16z));
 
     SetDlgItemInt(hdlg, IDC_TM_CHARSET,   pdp.tm.tmCharSet, FALSE);
     SetDlgItemText(hdlg, IDC_TM_FACENAME, pdp.szFaceName.ptr);
 }
 
-void MySetMapMode(HDC hdc, int iMapMode)
+void MySetMapMode(HDC hdc, int iMapMode) nothrow
 {
     switch (iMapMode)
     {

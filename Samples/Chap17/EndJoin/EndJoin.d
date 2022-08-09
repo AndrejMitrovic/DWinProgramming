@@ -96,7 +96,7 @@ int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int
 }
 
 extern (Windows)
-LRESULT WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) nothrow
 {
     static int[] iEnd  = [PS_ENDCAP_ROUND, PS_ENDCAP_SQUARE, PS_ENDCAP_FLAT];
     static int[] iJoin = [PS_JOIN_ROUND,   PS_JOIN_BEVEL,    PS_JOIN_MITER];

@@ -30,7 +30,7 @@ BOOL bUserAbort;
 HWND hDlgPrint;
 
 extern (Windows)
-BOOL PrintDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+BOOL PrintDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) nothrow
 {
     switch (msg)
     {

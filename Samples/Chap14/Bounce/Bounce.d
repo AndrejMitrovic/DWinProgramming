@@ -97,7 +97,7 @@ int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int
 }
 
 extern (Windows)
-LRESULT WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) nothrow
 {
     static HBITMAP hBitmap;
     static int cxClient, cyClient, xCenter, yCenter, cxTotal, cyTotal,

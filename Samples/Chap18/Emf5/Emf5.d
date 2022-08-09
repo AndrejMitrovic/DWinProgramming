@@ -105,6 +105,8 @@ int EnhMetaFileProc(HDC hdc, HANDLETABLE* pHandleTable,
     return TRUE;
 }
 
+alias extern (Windows) int function(void*, HANDLETABLE*, const(ENHMETARECORD)*, int, int) @system ExtFunc;
+
 extern (Windows)
 LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
@@ -134,7 +136,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
             //
             // should be:
             //     alias extern(Windows) int function(HANDLE hdc, HANDLETABLE* pHandleTable, ENHMETARECORD* pEmfRecord, int iHandles, int pData)
-            EnumEnhMetaFile(hdc, hemf, cast(int function(HANDLE, HANDLETABLE*, const(ENHMETARECORD)*, int, int))&EnhMetaFileProc, NULL, &rect);
+            EnumEnhMetaFile(hdc, hemf, cast(ExtFunc)&EnhMetaFileProc, NULL, &rect);
             DeleteEnhMetaFile(hemf);
             EndPaint(hwnd, &ps);
             return 0;

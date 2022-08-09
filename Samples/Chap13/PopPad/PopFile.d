@@ -32,8 +32,8 @@ OPENFILENAME ofn;
 void PopFileInitialize(HWND hwnd)
 {
     static string szFilter = "Text Files (*.TXT)\0*.txt\0"
-                             "ASCII Files (*.ASC)\0*.asc\0"
-                             "All Files (*.*)\0*.*\0\0";
+                             ~ "ASCII Files (*.ASC)\0*.asc\0"
+                             ~ "All Files (*.*)\0*.*\0\0";
 
     ofn.hwndOwner         = hwnd;
     ofn.hInstance         = NULL;
