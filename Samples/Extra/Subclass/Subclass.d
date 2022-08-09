@@ -12,6 +12,7 @@ import std.range;
 import std.string;
 import std.utf;
 
+import core.stdc.wchar_;
 import core.sys.windows.windef;
 import core.sys.windows.winuser;
 import core.sys.windows.wingdi;
@@ -149,7 +150,7 @@ int myWinMain(HINSTANCE hInst, HINSTANCE, LPSTR pStr, int nCmd)
 }
 
 extern (Windows)
-LRESULT WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) nothrow
 {
     switch (uMsg)
     {
@@ -166,7 +167,7 @@ LRESULT WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
-int OnCreate(HWND hwnd, CREATESTRUCT* cs)
+int OnCreate(HWND hwnd, CREATESTRUCT* cs) nothrow
 {
     // handles the WM_CREATE message of the main, parent window; return -1 to fail
     // window creation
@@ -191,7 +192,7 @@ int OnCreate(HWND hwnd, CREATESTRUCT* cs)
 
 HWND CreateControl(HWND hParent, HINSTANCE hInst, DWORD dwStyle,
                    RECT rc, int id, wstring caption,
-                   wstring classname)
+                   wstring classname) nothrow
 {
     dwStyle |= WS_CHILD | WS_VISIBLE;
     return CreateWindowEx(0,                  // extended styles
