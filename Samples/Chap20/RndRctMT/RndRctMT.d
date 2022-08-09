@@ -27,8 +27,6 @@ import core.sys.windows.winbase;
 import core.sys.windows.commdlg;
 import core.sys.windows.mmsystem;
 
-alias win32.winuser.MessageBox MessageBox;
-
 string appName     = "RndRctMT";
 string description = "Random Rectangles";
 HINSTANCE hinst;
