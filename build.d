@@ -44,12 +44,23 @@ int main(string[] args)
                 if (arg.exists && arg.isDir)
                 {
                     soloProject = arg;
+                    continue;
                 }
-                else
-                    enforce(0, "Cannot build project in path: \"" ~ arg ~
-                              "\". Try wrapping %CD% with quotes when calling build: \"%CD%\"");
             }
+
+            writeln("Cannot build project in path: \"" ~ arg
+                    ~ "\". Try wrapping %CD% with quotes when calling build: \"%CD%\"");
+            return 1;
         }
+    }
+
+    if (soloProject.length && parallelBuilding) {
+        parallelBuilding = false;  // only makes sense in multi-sample builds, just ignore for now
+    }
+
+    if (doRun && parallelBuilding) {
+        writeln("Cannot use both run & parallel as this would open too many apps");
+        return 1;
     }
 
     if (compiler == Compiler.GDC)
@@ -99,8 +110,6 @@ int main(string[] args)
     try
     {
         buildProjectDirs(dirs, cleanOnly);
-        if (soloProject.length && doRun)
-            runApp(dirs.front);
     }
     catch (ForcedExitException)
     {
@@ -441,6 +450,9 @@ void buildProjectDirs(string[] dirs, bool cleanOnly = false)
             {
                 if (!silent)
                     synchronized writeln("Built ok: " ~ dir.relativePath());
+
+                if (doRun)
+                    runApp(dir);
             }
         }
     }
