@@ -7,6 +7,7 @@ import core.runtime;
 import core.thread;
 import core.stdc.string;
 import std.conv;
+import std.exception;
 import std.math;
 import std.range;
 import std.string;
@@ -164,7 +165,7 @@ int myWinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int nCmd)
 
 // Main window message processing functions
 extern(Windows)
-LRESULT WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) nothrow
 {
     switch (uMsg)
     {
@@ -188,7 +189,7 @@ LRESULT WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 
-int OnCreate(HWND hwnd, CREATESTRUCT* cs)
+int OnCreate(HWND hwnd, CREATESTRUCT* cs) nothrow
 {
     // handles the WM_CREATE message of the main, parent window; return -1 to fail
     // window creation
@@ -202,7 +203,7 @@ int OnCreate(HWND hwnd, CREATESTRUCT* cs)
 }
 
 
-void OnParentNotify(HWND hwnd, UINT uMsg, HWND hChild)
+void OnParentNotify(HWND hwnd, UINT uMsg, HWND hChild) nothrow
 {
     // handles parent window's WM_PARENTNOTIFY message
     if (uMsg == WM_CREATE)
@@ -218,7 +219,7 @@ void OnParentNotify(HWND hwnd, UINT uMsg, HWND hChild)
 
 // superclassed edit control message functions
 extern(Windows)
-LRESULT EditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT EditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) nothrow
 {
     switch (uMsg)
     {
@@ -241,7 +242,7 @@ LRESULT EditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 
-void OnCommandEdit(HWND hwnd, int id, int nNotify, HWND hChild)
+void OnCommandEdit(HWND hwnd, int id, int nNotify, HWND hChild) nothrow
 {
     // handles WM_COMMAND message of the superclassed edit control
     if (hChild && nNotify == BN_CLICKED)
@@ -262,7 +263,7 @@ void OnCommandEdit(HWND hwnd, int id, int nNotify, HWND hChild)
 }
 
 
-int OnCreateEdit(HWND hwnd, CREATESTRUCT* cs)
+int OnCreateEdit(HWND hwnd, CREATESTRUCT* cs) nothrow
 {
     // handles the WM_CREATE message of the superclassed edit control; return -1 to
     // fail window creation
@@ -286,7 +287,7 @@ int OnCreateEdit(HWND hwnd, CREATESTRUCT* cs)
 
     if (hLib)
     {
-        alias extern(Windows) HRESULT function(HWND, LPCWSTR, LPCWSTR) DllSetWindowTheme;
+        alias extern(Windows) HRESULT function(HWND, LPCWSTR, LPCWSTR) nothrow DllSetWindowTheme;
         auto SetWindowTheme = cast(DllSetWindowTheme)GetProcAddress(hLib, "SetWindowTheme");
         SetWindowTheme(hBtn, " ", " ");
         FreeLibrary(hLib);
@@ -299,7 +300,7 @@ int OnCreateEdit(HWND hwnd, CREATESTRUCT* cs)
     return 0;
 }
 
-HFONT ChangeFont(HWND hwnd)
+HFONT ChangeFont(HWND hwnd) nothrow
 {
     // display font common dialog and return any created font based on user
     // selection
@@ -322,7 +323,7 @@ HFONT ChangeFont(HWND hwnd)
 
 
 HWND CreateEdit(HWND hParent, HINSTANCE hInst, DWORD dwStyle,
-                ref RECT rc, int id, string caption)
+                ref RECT rc, int id, string caption) nothrow
 {
     // superclass the edit control, register the new edit control class and then
     // create a control of that control class.
@@ -336,7 +337,7 @@ HWND CreateEdit(HWND hParent, HINSTANCE hInst, DWORD dwStyle,
     wpOldProc = wcx.lpfnWndProc; // save original wndproc
     // now change information to suit requirements
     string classname = "superclassed_edit";
-    wcx.lpszClassName = classname.toUTF16z; // unique wnd class name
+    wcx.lpszClassName = assumeWontThrow(classname.toUTF16z); // unique wnd class name
     wcx.lpfnWndProc   = &EditProc;          // new edit wndproc
     wcx.hInstance     = hInst;
 
@@ -349,8 +350,8 @@ HWND CreateEdit(HWND hParent, HINSTANCE hInst, DWORD dwStyle,
 
     dwStyle |= WS_CHILD | WS_VISIBLE;
     return CreateWindowEx(WS_EX_CLIENTEDGE,  // extended styles
-                          classname.toUTF16z, // control 'class' name
-                          caption.toUTF16z,   // control caption
+                          assumeWontThrow(classname.toUTF16z), // control 'class' name
+                          assumeWontThrow(caption.toUTF16z),   // control caption
                           dwStyle,           // control style
                           rc.left,           // position: left
                           rc.top,            // position: top
@@ -364,13 +365,13 @@ HWND CreateEdit(HWND hParent, HINSTANCE hInst, DWORD dwStyle,
 }
 
 
-int ErrMsg(string s)
+int ErrMsg(string s) nothrow
 {
-    return MessageBox(null, s.toUTF16z, "ERROR", MB_OK | MB_ICONEXCLAMATION);
+    return MessageBox(null, assumeWontThrow(s.toUTF16z), "ERROR", MB_OK | MB_ICONEXCLAMATION);
 }
 
 
-void SetFormattingRect(HWND hwnd)
+void SetFormattingRect(HWND hwnd) nothrow
 {
     // sets the formatting rectangle for the superclassed edit control ie the
     // dimensions used to display text.
