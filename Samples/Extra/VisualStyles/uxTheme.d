@@ -633,7 +633,7 @@ const uint MAX_INTLIST_COUNT = 10;
 struct INTLIST
 {
     int iValueCount;          // number of values in iValues
-    int iValues[MAX_INTLIST_COUNT];
+    int[MAX_INTLIST_COUNT] iValues;
 };
 
 alias INTLIST* PINTLIST;
