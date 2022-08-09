@@ -20,8 +20,11 @@ import std.parallelism;
 extern(C) int kbhit();
 extern(C) int getch();
 
+string projectRootDir;
+
 int main(string[] args)
 {
+    projectRootDir = getcwd();
     args.popFront;
 
     foreach (arg; args)
@@ -451,8 +454,15 @@ void buildProjectDirs(string[] dirs, bool cleanOnly = false)
                 if (!silent)
                     synchronized writeln("Built ok: " ~ dir.relativePath());
 
-                if (doRun)
-                    runApp(dir);
+                if (doRun) {
+                    try {
+                        runApp(dir);
+                    } catch (Exception ex) {
+                        writeln("Sample failed at runtime. Continuing build..");
+                    }
+
+                    chdir(projectRootDir);  // go back to root
+                }
             }
         }
     }
