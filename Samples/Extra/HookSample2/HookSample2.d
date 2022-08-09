@@ -263,7 +263,7 @@ shared static this()
 }
 
 extern(Windows)
-LRESULT LowLevelKeyboardProc(int code, WPARAM wParam, LPARAM lParam)
+LRESULT LowLevelKeyboardProc(int code, WPARAM wParam, LPARAM lParam) nothrow
 {
     auto kbs = cast(KBDLLHOOKSTRUCT*)lParam;
 
@@ -274,12 +274,12 @@ LRESULT LowLevelKeyboardProc(int code, WPARAM wParam, LPARAM lParam)
         input.type = INPUT_KEYBOARD;
         input.ki.dwFlags = (wParam == WM_KEYDOWN) ? 0 : KEYEVENTF_KEYUP;
 
-        stderr.writefln("kbs: %s", *kbs);
+        assumeWontThrow(stderr.writefln("kbs: %s", *kbs));
 
         //~ stderr.writefln("scancode: %s alt: %s, vk: %s", kbs.scanCode, kbs.flags & LLKHF_ALTDOWN, kbs.vkCode);
 
         // replace key
-        input.ki.wVk = keyMap.get(cast(WORD)kbs.vkCode, cast(WORD)kbs.vkCode);
+        input.ki.wVk = assumeWontThrow(keyMap.get(cast(WORD)kbs.vkCode, cast(WORD)kbs.vkCode));
 
         SendInput(1, &input, INPUT.sizeof);
         return -1;
