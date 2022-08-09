@@ -7,7 +7,6 @@ module NetTIme;
 
 /+
  + Note: Doesn't seem to work. The original C example doesn't work either.
- +
  +/
 
 import core.memory;
@@ -15,6 +14,7 @@ import core.runtime;
 import core.thread;
 import core.stdc.config;
 import std.conv;
+import std.exception;
 import std.math;
 import std.range;
 import std.string;
@@ -39,8 +39,9 @@ string appName     = "NetTime";
 string description = "Set System Clock from the Internet";
 HINSTANCE hinst;
 
+
 // wrong prototype in win32.winsock2
-extern(Windows) int WSAAsyncSelect(SOCKET, HWND, u_int, int);
+extern(Windows) int WSAAsyncSelect(SOCKET, HWND, uint, int) nothrow;
 
 extern (Windows)
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int iCmdShow)
@@ -103,7 +104,7 @@ int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int
                         hInstance,                     // program instance handle
                         NULL);                         // creation parameters
 
-    hwndModeless = CreateDialog(hInstance, appName.toUTF16z, hwnd, &MainDlg);
+    hwndModeless = CreateDialog(hInstance, assumeWontThrow(appName.toUTF16z), hwnd, &MainDlg);
 
     // Size the main parent window to the size of the dialog box.
     // Show both windows.
@@ -163,7 +164,7 @@ wstring fromWStringz(const wchar* s)
 TCHAR[32] szOKLabel = 0;
 
 extern (Windows)
-BOOL MainDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+BOOL MainDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
     static string szIPAddr = "132.163.135.130";
     static HWND hwndButton, hwndEdit;
@@ -196,29 +197,29 @@ BOOL MainDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                     iError = WSAStartup(MAKEWORD(2, 0), &WSAData);
                     if (iError)
                     {
-                        EditPrintf(hwndEdit, format("Startup error #%s.\r\n", iError));
+                        EditPrintf(hwndEdit, assumeWontThrow(format("Startup error #%s.\r\n", iError)));
                         return TRUE;
                     }
 
-                    EditPrintf(hwndEdit, format("Started up %s\r\n", WSAData.szDescription));
+                    EditPrintf(hwndEdit, assumeWontThrow(format("Started up %s\r\n", WSAData.szDescription)));
 
                     // Call "socket"
                     sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
                     if (sock == INVALID_SOCKET)
                     {
-                        EditPrintf(hwndEdit, format("Socket creation error #%s.\r\n", WSAGetLastError()));
+                        EditPrintf(hwndEdit, assumeWontThrow(format("Socket creation error #%s.\r\n", WSAGetLastError())));
                         WSACleanup();
                         return TRUE;
                     }
 
-                    EditPrintf(hwndEdit, format("Socket %s created.\r\n", sock));
+                    EditPrintf(hwndEdit, assumeWontThrow(format("Socket %s created.\r\n", sock)));
 
                     // Call "WSAAsyncSelect"
                     if (SOCKET_ERROR == WSAAsyncSelect(sock, hwnd, WM_SOCKET_NOTIFY,
                                                        FD_CONNECT | FD_READ))
                     {
-                        EditPrintf(hwndEdit, format("WSAAsyncSelect error #%s.\r\n", WSAGetLastError()));
+                        EditPrintf(hwndEdit, assumeWontThrow(format("WSAAsyncSelect error #%s.\r\n", WSAGetLastError())));
                         closesocket(sock);
                         WSACleanup();
                         return TRUE;
@@ -230,7 +231,7 @@ BOOL MainDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
                     // @BUG@: S_un is not in the bindings
                     //~ sa.sin_addr.S_un.S_addr = inet_addr(szIPAddr.toStringz);
-                    sa.sin_addr.S_addr = inet_addr(szIPAddr.toStringz);
+                    sa.sin_addr.s_addr = inet_addr(szIPAddr.toStringz);
 
                     connect(sock, cast(SOCKADDR*)&sa, sa.sizeof);
 
@@ -240,13 +241,13 @@ BOOL MainDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                     iError = WSAGetLastError();
                     if (WSAEWOULDBLOCK != iError)
                     {
-                        EditPrintf(hwndEdit, format("Connect error #%s.\r\n", iError));
+                        EditPrintf(hwndEdit, assumeWontThrow(format("Connect error #%s.\r\n", iError)));
                         closesocket(sock);
                         WSACleanup();
                         return TRUE;
                     }
 
-                    EditPrintf(hwndEdit, format("Connecting to %s...", szIPAddr));
+                    EditPrintf(hwndEdit, assumeWontThrow(format("Connecting to %s...", szIPAddr)));
 
                     // The result of the "connect" call will be reported
                     // through the WM_SOCKET_NOTIFY message.
@@ -298,12 +299,12 @@ BOOL MainDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
                     if (wError)
                     {
-                        EditPrintf(hwndEdit, format("Connect error #%s.", wError));
+                        EditPrintf(hwndEdit, assumeWontThrow(format("Connect error #%s.", wError)));
                         SendMessage(hwnd, WM_COMMAND, IDCANCEL, 0);
                         return TRUE;
                     }
 
-                    EditPrintf(hwndEdit, format("Connected to %s.\r\n", szIPAddr));
+                    EditPrintf(hwndEdit, assumeWontThrow(format("Connected to %s.\r\n", szIPAddr)));
 
                     // Try to receive data. The call will generate an error
                     // of WSAEWOULDBLOCK and an event of FD_READ
@@ -318,7 +319,7 @@ BOOL MainDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
                     if (wError)
                     {
-                        EditPrintf(hwndEdit, format("FD_READ error #%s.", wError));
+                        EditPrintf(hwndEdit, assumeWontThrow(format("FD_READ error #%s.", wError)));
                         SendMessage(hwnd, WM_COMMAND, IDCANCEL, 0);
                         return TRUE;
                     }
@@ -326,7 +327,7 @@ BOOL MainDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                     // Get the time and swap the bytes
                     iSize  = recv(sock, cast(ubyte*)&ulTime, 4, 0);
                     ulTime = ntohl(cast(c_ulong)ulTime);
-                    EditPrintf(hwndEdit, format("Received current time of %s seconds since Jan. 1 1900.\r\n", ulTime));
+                    EditPrintf(hwndEdit, assumeWontThrow(format("Received current time of %s seconds since Jan. 1 1900.\r\n", ulTime)));
 
                     // Change the system time
                     ChangeSystemTime(hwndEdit, cast(uint)ulTime);  // downcasting..
@@ -345,7 +346,7 @@ BOOL MainDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 extern (Windows)
-BOOL ServerDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+BOOL ServerDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
     static wchar[] szServer;
     static WORD  wServer = IDC_SERVER1;
@@ -354,7 +355,7 @@ BOOL ServerDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     switch (message)
     {
         case WM_INITDIALOG:
-            szServer = fromWStringz(cast(wchar*)lParam).dup;
+            szServer = assumeWontThrow(fromWStringz(cast(wchar*)lParam).dup);
             CheckRadioButton(hwnd, IDC_SERVER1, IDC_SERVER10, wServer);
             return TRUE;
 
@@ -378,7 +379,7 @@ BOOL ServerDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                 case IDOK:
                     GetDlgItemText(hwnd, wServer, szLabel.ptr, szLabel.count);
 
-                    szServer = szLabel[szLabel.indexOf("(") .. szLabel.indexOf(")")];
+                    szServer = assumeWontThrow(szLabel[szLabel.indexOf("(") .. szLabel.indexOf(")")]);
                     EndDialog(hwnd, TRUE);
                     return TRUE;
 
@@ -397,7 +398,7 @@ BOOL ServerDlg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     return FALSE;
 }
 
-void ChangeSystemTime(HWND hwndEdit, ULONG ulTime)
+void ChangeSystemTime(HWND hwndEdit, ULONG ulTime) nothrow
 {
     FILETIME ftNew;
     LARGE_INTEGER li;
@@ -428,7 +429,7 @@ void ChangeSystemTime(HWND hwndEdit, ULONG ulTime)
         EditPrintf(hwndEdit, "Could NOT set new date and time.");
 }
 
-void FormatUpdatedTime(HWND hwndEdit, SYSTEMTIME* pstOld, SYSTEMTIME* pstNew)
+void FormatUpdatedTime(HWND hwndEdit, SYSTEMTIME* pstOld, SYSTEMTIME* pstNew) nothrow
 {
     TCHAR[64] szDateOld, szTimeOld, szDateNew, szTimeNew;
     szDateOld = 0;
@@ -452,15 +453,75 @@ void FormatUpdatedTime(HWND hwndEdit, SYSTEMTIME* pstOld, SYSTEMTIME* pstNew)
                   pstNew, NULL, szTimeNew.ptr, szTimeNew.count);
 
     EditPrintf(hwndEdit,
-               format("System date and time successfully changed from\r\n\t%s, %s.%03s to\r\n\t%s, %s.%03s.",
+               assumeWontThrow(format("System date and time successfully changed from\r\n\t%s, %s.%03s to\r\n\t%s, %s.%03s.",
                szDateOld, szTimeOld, pstOld.wMilliseconds,
-               szDateNew, szTimeNew, pstNew.wMilliseconds));
+               szDateNew, szTimeNew, pstNew.wMilliseconds)));
 }
 
 //~ void EditPrintf(HWND hwndEdit, TCHAR* szFormat, ...)
-void EditPrintf(HWND hwndEdit, string szBuffer)
+void EditPrintf(HWND hwndEdit, string szBuffer) nothrow
 {
     SendMessage(hwndEdit, EM_SETSEL, cast(WPARAM)-1, cast(LPARAM)-1);
-    SendMessage(hwndEdit, EM_REPLACESEL, FALSE, cast(LPARAM)szBuffer.toUTF16z);
+    SendMessage(hwndEdit, EM_REPLACESEL, FALSE, assumeWontThrow(cast(LPARAM)szBuffer.toUTF16z));
     SendMessage(hwndEdit, EM_SCROLLCARET, 0, 0);
 }
+
+// missing druntime definitions
+// https://issues.dlang.org/show_bug.cgi?id=23289
+enum {
+    FD_READ_BIT,
+    FD_WRITE_BIT,
+    FD_OOB_BIT,
+    FD_ACCEPT_BIT,
+    FD_CONNECT_BIT,
+    FD_CLOSE_BIT,
+    FD_QOS_BIT,
+    FD_GROUP_QOS_BIT,
+    FD_ROUTING_INTERFACE_CHANGE_BIT,
+    FD_ADDRESS_LIST_CHANGE_BIT,
+    FD_MAX_EVENTS // = 10
+}
+
+const int
+    FD_READ                     = 1 << FD_READ_BIT,
+    FD_WRITE                    = 1 << FD_WRITE_BIT,
+    FD_OOB                      = 1 << FD_OOB_BIT,
+    FD_ACCEPT                   = 1 << FD_ACCEPT_BIT,
+    FD_CONNECT                  = 1 << FD_CONNECT_BIT,
+    FD_CLOSE                    = 1 << FD_CLOSE_BIT,
+    FD_QOS                      = 1 << FD_QOS_BIT,
+    FD_GROUP_QOS                = 1 << FD_GROUP_QOS_BIT,
+    FD_ROUTING_INTERFACE_CHANGE = 1 << FD_ROUTING_INTERFACE_CHANGE_BIT,
+    FD_ADDRESS_LIST_CHANGE      = 1 << FD_ADDRESS_LIST_CHANGE_BIT,
+    FD_ALL_EVENTS               = (1 << FD_MAX_EVENTS) - 1;
+
+enum {
+    IPPORT_ECHO        =    7,
+    IPPORT_DISCARD     =    9,
+    IPPORT_SYSTAT      =   11,
+    IPPORT_DAYTIME     =   13,
+    IPPORT_NETSTAT     =   15,
+    IPPORT_FTP         =   21,
+    IPPORT_TELNET      =   23,
+    IPPORT_SMTP        =   25,
+    IPPORT_TIMESERVER  =   37,
+    IPPORT_NAMESERVER  =   42,
+    IPPORT_WHOIS       =   43,
+    IPPORT_MTP         =   57,
+    IPPORT_TFTP        =   69,
+    IPPORT_RJE         =   77,
+    IPPORT_FINGER      =   79,
+    IPPORT_TTYLINK     =   87,
+    IPPORT_SUPDUP      =   95,
+    IPPORT_EXECSERVER  =  512,
+    IPPORT_LOGINSERVER =  513,
+    IPPORT_CMDSERVER   =  514,
+    IPPORT_EFSSERVER   =  520,
+    IPPORT_BIFFUDP     =  512,
+    IPPORT_WHOSERVER   =  513,
+    IPPORT_ROUTESERVER =  520,
+    IPPORT_RESERVED    = 1024
+}
+
+alias LOWORD WSAGETASYNCBUFLEN, WSAGETSELECTEVENT;
+alias HIWORD WSAGETASYNCERROR, WSAGETSELECTERROR;
