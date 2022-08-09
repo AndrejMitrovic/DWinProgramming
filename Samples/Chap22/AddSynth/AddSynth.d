@@ -8,8 +8,10 @@ module AddSynth;
 import core.memory;
 import core.runtime;
 import core.thread;
+import std.algorithm;
 import std.array : replicate;
 import std.conv;
+import std.exception;
 import std.math;
 import std.range;
 import std.string;
@@ -68,7 +70,7 @@ enum ID_TIMER     = 1;
 enum SAMPLE_RATE  = 22050;
 enum MAX_PARTIALS = 21;
 
-double SineGenerator(double dFreq, ref double pdAngle)
+double SineGenerator(double dFreq, ref double pdAngle) nothrow
 {
     double dAmp;
 
@@ -82,7 +84,7 @@ double SineGenerator(double dFreq, ref double pdAngle)
 }
 
 // Fill a buffer with a composite waveform
-VOID FillBuffer(INS ins, ref PBYTE pBuffer, int iNumSamples)
+VOID FillBuffer(INS ins, ref PBYTE pBuffer, int iNumSamples) nothrow
 {
     static double[MAX_PARTIALS] dAngle;
     dAngle[] = 0.0;
@@ -155,7 +157,7 @@ VOID FillBuffer(INS ins, ref PBYTE pBuffer, int iNumSamples)
     }
 }
 
-BOOL MakeWaveFile(INS ins, string szFileName)
+BOOL MakeWaveFile(INS ins, string szFileName) nothrow
 {
     DWORD  dwWritten;
     HANDLE hFile;
@@ -163,8 +165,9 @@ BOOL MakeWaveFile(INS ins, string szFileName)
     PBYTE pBuffer;
     WAVEFORMATEX waveform;
 
-    hFile = CreateFile(szFileName.toUTF16z, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-    enforce(hFile != NULL);
+    hFile = CreateFile(assumeWontThrow(szFileName.toUTF16z), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,
+        FILE_ATTRIBUTE_NORMAL, NULL);
+    assert(hFile != NULL);  // should be enforce, but every winproc needs to be nothrow..
 
     iNumSamples = (cast(int)ins.iMsecTime * SAMPLE_RATE / 1000 + 1) / 2 * 2;
     iPcmSize    = PCMWAVEFORMAT.sizeof;
@@ -174,7 +177,7 @@ BOOL MakeWaveFile(INS ins, string szFileName)
     if (pBuffer is null)
     {
         CloseHandle(hFile);
-        throw new Exception("Can't allocate buffer.");
+        assert(0, "Can't allocate buffer.");
     }
 
     FillBuffer(ins, pBuffer, iNumSamples);
@@ -207,16 +210,16 @@ BOOL MakeWaveFile(INS ins, string szFileName)
 
     if (cast(int)dwWritten != iNumSamples)
     {
-        DeleteFile(szFileName.toUTF16z);
+        DeleteFile(assumeWontThrow(szFileName.toUTF16z));
         return FALSE;
     }
 
     return TRUE;
 }
 
-void TestAndCreateFile(HWND hwnd, INS ins, string szFileName, int idButton)
+void TestAndCreateFile(HWND hwnd, INS ins, string szFileName, int idButton) nothrow
 {
-    if (GetFileAttributes(szFileName.toUTF16z) != -1)
+    if (GetFileAttributes(assumeWontThrow(szFileName.toUTF16z)) != -1)
         EnableWindow(GetDlgItem(hwnd, idButton), TRUE);
     else
     {
@@ -224,15 +227,16 @@ void TestAndCreateFile(HWND hwnd, INS ins, string szFileName, int idButton)
             EnableWindow(GetDlgItem(hwnd, idButton), TRUE);
         else
         {
-            string message = format("Could not create %s.", szFileName);
+            string message = assumeWontThrow(format("Could not create %s.", szFileName));
             MessageBeep(MB_ICONEXCLAMATION);
-            MessageBox(hwnd, message.toUTF16z, appName.toUTF16z, MB_OK | MB_ICONEXCLAMATION);
+            MessageBox(hwnd, assumeWontThrow(message.toUTF16z),
+                assumeWontThrow(appName.toUTF16z), MB_OK | MB_ICONEXCLAMATION);
         }
     }
 }
 
 extern (Windows)
-BOOL DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+BOOL DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
     string szTrum = "Trumpet.wav";
     string szOboe = "Oboe.wav";
@@ -265,15 +269,15 @@ BOOL DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             switch (LOWORD(wParam))
             {
                 case IDC_TRUMPET:
-                    PlaySound(szTrum.toUTF16z, NULL, SND_FILENAME | SND_SYNC);
+                    PlaySound(assumeWontThrow(szTrum.toUTF16z), NULL, SND_FILENAME | SND_SYNC);
                     return TRUE;
 
                 case IDC_OBOE:
-                    PlaySound(szOboe.toUTF16z, NULL, SND_FILENAME | SND_SYNC);
+                    PlaySound(assumeWontThrow(szOboe.toUTF16z), NULL, SND_FILENAME | SND_SYNC);
                     return TRUE;
 
                 case IDC_CLARINET:
-                    PlaySound(szClar.toUTF16z, NULL, SND_FILENAME | SND_SYNC);
+                    PlaySound(assumeWontThrow(szClar.toUTF16z), NULL, SND_FILENAME | SND_SYNC);
                     return TRUE;
 
                 default:
