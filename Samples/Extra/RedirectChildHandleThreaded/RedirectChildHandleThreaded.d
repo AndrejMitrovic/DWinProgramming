@@ -182,8 +182,8 @@ version = StdConcurrency;
 void main(string[] args)
 {
     // workaround: build.d tries to build stub.d if it's present
-    system(`echo module stub; void main() { } > stub.d`);
-    scope(exit) { std.file.remove("stub.d"); }
+    executeShell(`echo module stub; void main() { } > ..\stub.d`);
+    scope(exit) { std.file.remove(`..\stub.d`); }
 
     foreach (ref procInfo; processInfos)
     {
@@ -196,7 +196,7 @@ void main(string[] args)
     {
         foreach (procInfo; taskPool.parallel(processInfos[], 1))
         {
-            makeProcess(r"dmd stub.d", procInfo);
+            makeProcess(r"cat ..\stub.d", procInfo);
         }
     }
     else
@@ -204,7 +204,7 @@ void main(string[] args)
     {
         foreach (index; 0 .. processInfos.length)
         {
-            spawn(&makeProcess, index, r"dmd stub.d");
+            spawn(&makeProcess, index, r"cat ..\stub.d");
         }
     }
     else
