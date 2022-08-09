@@ -10,6 +10,7 @@ import core.runtime;
 import core.thread;
 import std.algorithm : max, min;
 import std.conv;
+import std.exception;
 import std.math;
 import std.random;
 import std.range;
@@ -101,7 +102,7 @@ int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int
 
 int cyChar;
 
-int CheckBottom(HWND hwnd, int cyClient, int iLine)
+int CheckBottom(HWND hwnd, int cyClient, int iLine) nothrow
 {
     if (iLine * cyChar + cyChar > cyClient)
     {
@@ -117,7 +118,7 @@ int CheckBottom(HWND hwnd, int cyClient, int iLine)
 // Window 1: Display increasing sequence of numbers
 // ------------------------------------------------
 extern (Windows)
-LRESULT WndProc1(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc1(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
     static int iNum, iLine, cyClient;
     HDC hdc;
@@ -137,8 +138,8 @@ LRESULT WndProc1(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             iLine = CheckBottom(hwnd, cyClient, iLine);
             hdc   = GetDC(hwnd);
 
-            szBuffer = format("%s", iNum++);
-            TextOut(hdc, 0, iLine * cyChar, szBuffer.toUTF16z, szBuffer.count);
+            szBuffer = assumeWontThrow(format("%s", iNum++));
+            TextOut(hdc, 0, iLine * cyChar, assumeWontThrow(szBuffer.toUTF16z), szBuffer.count);
 
             ReleaseDC(hwnd, hdc);
             iLine++;
@@ -154,7 +155,7 @@ LRESULT WndProc1(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 // Window 2: Display increasing sequence of prime numbers
 // ------------------------------------------------------
 extern (Windows)
-LRESULT WndProc2(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc2(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
     static int iNum = 1, iLine, cyClient;
     HDC hdc;
@@ -186,8 +187,8 @@ LRESULT WndProc2(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             iLine = CheckBottom(hwnd, cyClient, iLine);
             hdc   = GetDC(hwnd);
 
-            szBuffer = format("%s", iNum);
-            TextOut(hdc, 0, iLine * cyChar, szBuffer.toUTF16z, szBuffer.count);
+            szBuffer = assumeWontThrow(format("%s", iNum));
+            TextOut(hdc, 0, iLine * cyChar, assumeWontThrow(szBuffer.toUTF16z), szBuffer.count);
 
             ReleaseDC(hwnd, hdc);
             iLine++;
@@ -203,7 +204,7 @@ LRESULT WndProc2(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 // Window 3: Display increasing sequence of Fibonacci numbers
 // ----------------------------------------------------------
 extern (Windows)
-LRESULT WndProc3(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc3(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
     static int iNum = 0, iNext = 1, iLine, cyClient;
     HDC hdc;
@@ -227,8 +228,8 @@ LRESULT WndProc3(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             iLine = CheckBottom(hwnd, cyClient, iLine);
             hdc   = GetDC(hwnd);
 
-            szBuffer = format("%s", iNum);
-            TextOut(hdc, 0, iLine * cyChar, szBuffer.toUTF16z, szBuffer.count);
+            szBuffer = assumeWontThrow(format("%s", iNum));
+            TextOut(hdc, 0, iLine * cyChar, assumeWontThrow(szBuffer.toUTF16z), szBuffer.count);
 
             ReleaseDC(hwnd, hdc);
             iTemp  = iNum;
@@ -247,7 +248,7 @@ LRESULT WndProc3(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 // Window 4: Display circles of random radii
 // -----------------------------------------
 extern (Windows)
-LRESULT WndProc4(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc4(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
     static int cxClient, cyClient;
     HDC hdc;
@@ -264,7 +265,7 @@ LRESULT WndProc4(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             InvalidateRect(hwnd, NULL, TRUE);
             UpdateWindow(hwnd);
 
-            iDiameter = uniform(0, (max(1, min(cxClient, cyClient))));
+            iDiameter = assumeWontThrow(uniform(0, (max(1, min(cxClient, cyClient)))));
             hdc       = GetDC(hwnd);
 
             Ellipse(hdc, (cxClient - iDiameter) / 2,
@@ -289,7 +290,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
     scope (failure) assert(0);
 
-    static HWND hwndChild[4];
+    static HWND[4] hwndChild;
     static string[] szChildClass = ["Child1", "Child2", "Child3", "Child4"];
     static WNDPROC[] ChildProc = [&WndProc1, &WndProc2, &WndProc3, &WndProc4];
     HINSTANCE hInstance;

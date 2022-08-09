@@ -10,6 +10,7 @@ import core.runtime;
 import core.thread;
 import std.concurrency;
 import std.conv;
+import std.exception;
 import std.math;
 import std.range;
 import std.string;
@@ -24,8 +25,6 @@ import core.sys.windows.wingdi;
 import core.sys.windows.winbase;
 import core.sys.windows.commdlg;
 import core.sys.windows.mmsystem;
-
-alias win32.winuser.MessageBox MessageBox;
 
 string appName     = "BigJob1";
 string description = "Multithreading Demo";
@@ -101,9 +100,6 @@ int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int
 }
 
 enum REP = 10_000_000;
-enum STATUS_READY    = 0;
-enum STATUS_WORKING  = 1;
-enum STATUS_DONE     = 2;
 enum WM_CALC_DONE    = (WM_USER + 0);
 enum WM_CALC_ABORTED = (WM_USER + 1);
 
@@ -136,11 +132,13 @@ void ThreadFunc()
         SendMessage(params.hwnd, WM_CALC_ABORTED, 0, 0);
 }
 
+enum STATUS_READY    = 0;
+enum STATUS_WORKING  = 1;
+enum STATUS_DONE     = 2;
+
 extern (Windows)
 LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
-    scope (failure) assert(0);
-
     static INT  iStatus;
     static LONG lTime;
     static string[] szMessage = ["Ready (left mouse button begins)",
@@ -166,7 +164,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
             params.hwnd      = hwnd;
             params.bContinue = TRUE;
 
-            spawn(&ThreadFunc);
+            assumeWontThrow(spawn(&ThreadFunc));
 
             InvalidateRect(hwnd, NULL, TRUE);
             return 0;
@@ -190,8 +188,12 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
             hdc = BeginPaint(hwnd, &ps);
             GetClientRect(hwnd, &rect);
 
-            szBuffer = format(szMessage[iStatus], REP, lTime);
-            DrawText(hdc, szBuffer.toUTF16z, -1, &rect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+            if (iStatus == STATUS_DONE)
+                szBuffer = assumeWontThrow(format(szMessage[iStatus], REP, lTime));
+            else
+                szBuffer = szMessage[iStatus];
+            DrawText(hdc, assumeWontThrow(szBuffer.toUTF16z), -1, &rect,
+                DT_SINGLELINE | DT_CENTER | DT_VCENTER);
 
             EndPaint(hwnd, &ps);
             return 0;

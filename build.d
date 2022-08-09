@@ -398,6 +398,7 @@ void runApp(string dir)
 {
     string appName = absolutePath(dir).baseName;
     string exeName = absolutePath(dir) ~ `\` ~ appName ~ ".exe";
+    chdir(absolutePath(dir));
     executeShell(exeName);
 }
 

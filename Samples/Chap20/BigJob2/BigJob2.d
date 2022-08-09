@@ -16,6 +16,7 @@ import core.runtime;
 import core.thread;
 import std.concurrency;
 import std.conv;
+import std.exception;
 import std.math;
 import std.range;
 import std.string;
@@ -30,8 +31,6 @@ import core.sys.windows.wingdi;
 import core.sys.windows.winbase;
 import core.sys.windows.commdlg;
 import core.sys.windows.mmsystem;
-
-alias win32.winuser.MessageBox MessageBox;
 
 string appName     = "BigJob2";
 string description = "Multithreading Demo";
@@ -153,8 +152,6 @@ void ThreadFunc()
 extern (Windows)
 LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
-    scope (failure) assert(0);
-
     static HANDLE hEvent;
     static INT  iStatus;
     static LONG lTime;
@@ -175,7 +172,7 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
             params.hEvent = hEvent;
             params.bContinue = FALSE;
 
-            spawn(&ThreadFunc);
+            assumeWontThrow(spawn(&ThreadFunc));
 
             return 0;
 
@@ -215,8 +212,12 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 
             GetClientRect(hwnd, &rect);
 
-            szBuffer = format(szMessage[iStatus], REP, lTime);
-            DrawText(hdc, szBuffer.toUTF16z, -1, &rect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+            if (iStatus == STATUS_DONE)
+                szBuffer = assumeWontThrow(format(szMessage[iStatus], REP, lTime));
+            else
+                szBuffer = szMessage[iStatus];
+            DrawText(hdc, assumeWontThrow(szBuffer.toUTF16z), -1, &rect,
+                DT_SINGLELINE | DT_CENTER | DT_VCENTER);
 
             EndPaint(hwnd, &ps);
             return 0;
