@@ -14,6 +14,7 @@ import core.runtime;
 import core.thread;
 import core.stdc.string;
 import std.conv;
+import std.exception;
 import std.math;
 import std.range;
 import std.string;
@@ -129,7 +130,7 @@ MYHOOKDATA[NUMHOOKS] myhookdata;
 HWND gh_hwndMain;
 
 extern(Windows)
-LRESULT WndProc(HWND hwndMain, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT WndProc(HWND hwndMain, UINT uMsg, WPARAM wParam, LPARAM lParam) nothrow
 {
     static BOOL[NUMHOOKS] afHooks;
     static HMENU hmenu;
@@ -232,16 +233,16 @@ LRESULT WndProc(HWND hwndMain, UINT uMsg, WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
-void LookUpTheMessage(PMSG pMsg, out string buffer)
+void LookUpTheMessage(PMSG pMsg, out string buffer) nothrow
 {
-    buffer = to!string(*pMsg);
+    buffer = assumeWontThrow(to!string(*pMsg));
 }
 
 /****************************************************************
    WH_CALLWNDPROC hook procedure
 ****************************************************************/
 extern(Windows)
-LRESULT CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
+LRESULT CallWndProc(int nCode, WPARAM wParam, LPARAM lParam) nothrow
 {
     string szMsg;
     HDC  hdc;
@@ -261,8 +262,8 @@ LRESULT CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
     switch (nCode)
     {
         case HC_ACTION:
-            auto buffer = format("CALLWNDPROC - tsk: %s, msg: %s, %s times   ", wParam, szMsg, c++);
-            TextOut(hdc, 2, 15, buffer.toUTF16z, buffer.count);
+            auto buffer = assumeWontThrow(format("CALLWNDPROC - tsk: %s, msg: %s, %s times   ", wParam, szMsg, c++));
+            TextOut(hdc, 2, 15, assumeWontThrow(buffer.toUTF16z), buffer.count);
             break;
 
         default:
@@ -278,7 +279,7 @@ LRESULT CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
    WH_GETMESSAGE hook procedure
 ****************************************************************/
 extern(Windows)
-LRESULT GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
+LRESULT GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam) nothrow
 {
     string szMSGBuf;
     string szRem;
@@ -316,8 +317,8 @@ LRESULT GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
             LookUpTheMessage(cast(PMSG)lParam, szMsg);
 
             hdc     = GetDC(gh_hwndMain);
-            szMSGBuf = format("GETMESSAGE - wParam: %s, msg: %s, %s times   ", szRem, szMsg, c++);
-            TextOut(hdc, 2, 35, szMSGBuf.toUTF16z, szMSGBuf.count);
+            szMSGBuf = assumeWontThrow(format("GETMESSAGE - wParam: %s, msg: %s, %s times   ", szRem, szMsg, c++));
+            TextOut(hdc, 2, 35, assumeWontThrow(szMSGBuf.toUTF16z), szMSGBuf.count);
             break;
 
         default:
@@ -333,7 +334,7 @@ LRESULT GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
    WH_DEBUG hook procedure
 ****************************************************************/
 extern(Windows)
-LRESULT DebugProc(int nCode, WPARAM wParam, LPARAM lParam)
+LRESULT DebugProc(int nCode, WPARAM wParam, LPARAM lParam) nothrow
 {
     string szBuf;
     HDC  hdc;
@@ -350,8 +351,8 @@ LRESULT DebugProc(int nCode, WPARAM wParam, LPARAM lParam)
     switch (nCode)
     {
         case HC_ACTION:
-            szBuf = format("DEBUG - nCode: %s, tsk: %s, %s times   ", nCode, wParam, c++);
-            TextOut(hdc, 2, 55, szBuf.toUTF16z, szBuf.count);
+            szBuf = assumeWontThrow(format("DEBUG - nCode: %s, tsk: %s, %s times   ", nCode, wParam, c++));
+            TextOut(hdc, 2, 55, assumeWontThrow(szBuf.toUTF16z), szBuf.count);
             break;
 
         default:
@@ -367,7 +368,7 @@ LRESULT DebugProc(int nCode, WPARAM wParam, LPARAM lParam)
    WH_CBT hook procedure
 ****************************************************************/
 extern(Windows)
-LRESULT CBTProc(int nCode, WPARAM wParam, LPARAM lParam)
+LRESULT CBTProc(int nCode, WPARAM wParam, LPARAM lParam) nothrow
 {
     string szBuf;
     string szCode;
@@ -429,8 +430,8 @@ LRESULT CBTProc(int nCode, WPARAM wParam, LPARAM lParam)
             break;
     }
 
-    szBuf = format("CBT -  nCode: %s, tsk: %s, %s times   ", szCode, wParam, c++);
-    TextOut(hdc, 2, 75, szBuf.toUTF16z, szBuf.count);
+    szBuf = assumeWontThrow(format("CBT -  nCode: %s, tsk: %s, %s times   ", szCode, wParam, c++));
+    TextOut(hdc, 2, 75, assumeWontThrow(szBuf.toUTF16z), szBuf.count);
     ReleaseDC(gh_hwndMain, hdc);
 
     return CallNextHookEx(myhookdata[IDM_CBT].hhook, nCode, wParam, lParam);
@@ -440,7 +441,7 @@ LRESULT CBTProc(int nCode, WPARAM wParam, LPARAM lParam)
    WH_MOUSE hook procedure
 ****************************************************************/
 extern(Windows)
-LRESULT MouseProc(int nCode, WPARAM wParam, LPARAM lParam)
+LRESULT MouseProc(int nCode, WPARAM wParam, LPARAM lParam) nothrow
 {
     string szBuf;
     string szMsg;
@@ -459,10 +460,10 @@ LRESULT MouseProc(int nCode, WPARAM wParam, LPARAM lParam)
     LookUpTheMessage(cast(PMSG)lParam, szMsg);
 
     hdc     = GetDC(gh_hwndMain);
-    szBuf = format("MOUSE - nCode: %s, msg: %s, x: %s, y: %s, %s times   ",
-                   nCode, szMsg, LOWORD(lParam), HIWORD(lParam), c++);
+    szBuf = assumeWontThrow(format("MOUSE - nCode: %s, msg: %s, x: %s, y: %s, %s times   ",
+                   nCode, szMsg, LOWORD(lParam), HIWORD(lParam), c++));
 
-    TextOut(hdc, 2, 95, szBuf.toUTF16z, szBuf.count);
+    TextOut(hdc, 2, 95, assumeWontThrow(szBuf.toUTF16z), szBuf.count);
     ReleaseDC(gh_hwndMain, hdc);
 
     return CallNextHookEx(myhookdata[IDM_MOUSE].hhook, nCode, wParam, lParam);
@@ -472,7 +473,7 @@ LRESULT MouseProc(int nCode, WPARAM wParam, LPARAM lParam)
    WH_KEYBOARD hook procedure
 ****************************************************************/
 extern(Windows)
-LRESULT KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
+LRESULT KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) nothrow
 {
     if (nCode < 0)  // do not process message
         return CallNextHookEx(myhookdata[IDM_KEYBOARD].hhook, nCode, wParam, lParam);
@@ -483,10 +484,10 @@ LRESULT KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
     size_t  cch;
     HRESULT hResult;
 
-    szBuf = format("KEYBOARD - nCode: %s, vk: %s, %s times ", nCode, wParam, c++);
+    szBuf = assumeWontThrow(format("KEYBOARD - nCode: %s, vk: %s, %s times ", nCode, wParam, c++));
     hdc     = GetDC(gh_hwndMain);
 
-    TextOut(hdc, 2, 115, szBuf.toUTF16z, szBuf.count);
+    TextOut(hdc, 2, 115, assumeWontThrow(szBuf.toUTF16z), szBuf.count);
     ReleaseDC(gh_hwndMain, hdc);
 
     return CallNextHookEx(myhookdata[IDM_KEYBOARD].hhook, nCode, wParam, lParam);
@@ -497,7 +498,7 @@ LRESULT KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
 ****************************************************************/
 
 extern(Windows)
-LRESULT MessageProc(int nCode, WPARAM wParam, LPARAM lParam)
+LRESULT MessageProc(int nCode, WPARAM wParam, LPARAM lParam) nothrow
 {
     string szBuf;
     string szMsg;
@@ -526,7 +527,7 @@ LRESULT MessageProc(int nCode, WPARAM wParam, LPARAM lParam)
             break;
 
         default:
-            szCode = format("Unknown: %s", nCode);
+            szCode = assumeWontThrow(format("Unknown: %s", nCode));
             break;
     }
 
@@ -536,9 +537,9 @@ LRESULT MessageProc(int nCode, WPARAM wParam, LPARAM lParam)
     LookUpTheMessage(cast(PMSG)lParam, szMsg);
 
     hdc     = GetDC(gh_hwndMain);
-    szBuf = format("MSGFILTER  nCode: %s, msg: %s, %s times    ", szCode, szMsg, c++);
+    szBuf = assumeWontThrow(format("MSGFILTER  nCode: %s, msg: %s, %s times    ", szCode, szMsg, c++));
 
-    TextOut(hdc, 2, 135, szBuf.toUTF16z, szBuf.count);
+    TextOut(hdc, 2, 135, assumeWontThrow(szBuf.toUTF16z), szBuf.count);
     ReleaseDC(gh_hwndMain, hdc);
 
     return CallNextHookEx(myhookdata[IDM_MSGFILTER].hhook, nCode, wParam, lParam);
