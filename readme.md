@@ -77,54 +77,7 @@ Also see the answer to the 3rd question here:
 https://www.charlespetzold.com/faq.html
 
 ## Links
-D2 Programming Language Homepage: https://dlang.org
-
-Code samples of using Win32 API and Cairo: https://github.com/AndrejMitrovic/cairoDSamples
-
-How to make extensionless files open in your editor in WinXP: https://perishablepress.com/press/2006/08/08/associate-extensionless-files-with-notepad/
-    Note: Also, make sure you hit the 'Open with' button and select your editor.
-
-How to make extensionless files open in your editor in Windows 7 and Windows 8 (and probably XP):
-Run this in the command prompt:
-    assoc .="No Extension"
-    ftype "No Extension"="C:\path\to\your editor.exe" "%1"
-Also see https://superuser.com/a/13947/47065
 
 Programming Windows Homepage: https://www.charlespetzold.com/pw5/
 
-Programming Windows C Code Samples: https://www.charlespetzold.com/books.html
-(search for ProgWin5.zip)
-
-Charles Petzold FAQ: https://www.charlespetzold.com/faq.html
-
-Programming Windows Errata #1: https://www.computersciencelab.com/PetzoldErrata.htm
-
-Programming Windows Errata #2: https://www.jasondoucette.com/books/pw5/pw5errata.html
-
-MSDN GDI page: https://msdn.microsoft.com/en-us/library/dd145203%28v=vs.85%29.aspx
-
-MSDN list of Windows APIs: https://msdn.microsoft.com/en-us/library/ff818516.aspx
-
-Windows API bindings: https://dsource.org/projects/bindings/wiki/WindowsApi
-
-RDMD: https://www.digitalmars.com/d/2.0/rdmd.html
-
-RDMD@github: https://github.com/D-Programming-Language/tools
-
-HTOD: https://www.digitalmars.com/d/2.0/htod.html
-
-DDBG D Debugger: https://ddbg.mainia.de/doc.html
-
-Uncrustify - Code Beautifier: https://sourceforge.net/projects/uncrustify/develop
-
-UniversalIndentGUI - GUI Frontend for Code Beautifiers:
-
-https://universalindent.sourceforge.net/
-
 Using Resources in D Tutorial: https://prowiki.org/wiki4d/wiki.cgi?D__Tutorial/WindowsResources
-
-Unicode Character Viewer: https://rishida.net/scripts/uniview/
-
-Environment Variables: https://www.computerhope.com/issues/ch000549.htm
-
-Environment Editor: https://www.rapidee.com/
