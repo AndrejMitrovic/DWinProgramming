@@ -1,12 +1,3 @@
-# Note: This project no longer builds as-is.
-
-There's been a lot of breaking changes in the D compiler in the last 10 years,
-since this project was initially created. The DMD linker is no longer Optlink
-by default (unless -m32omf is used), and the build scripts will need to be updated.
-
-Ideally this entire project would be dub-ified, made const-correct, and used
-utility libraries for things like instantiating COM objects.
-
 # DWinProgramming - D WinAPI programming
 This is a collection of samples from Charles Petzold's Programming Windows book,
 translated into the D programming language. It also contains a small collection
@@ -18,26 +9,16 @@ This project has been created by Andrej Mitrovic.
 Project Homepage: https://github.com/AndrejMitrovic/DWinProgramming
 
 ## Building Requirements
-- Windows 7 or newer.
+- Windows 7 or newer. (lately only tested on Win 10)
 - Compiler: [DMD] v2.100.
 
 [DMD]: https://dlang.org/download.html
 
 ## Building
 
-Compile the build script:
+Run:
 
-    $ make_build.bat
-
-And then to build all samples via DMD call:
-
-    $ build.exe
-
-To build only a single example, CD to its directory and run:
-
-    $ ..\..\..\build.exe filename.d (filename being the main file)
-
-Other options are: clean, debug.
+    $ rdmd build.d
 
 ## Optional Tools
 - HTOD: https://www.digitalmars.com/d/2.0/htod.html
