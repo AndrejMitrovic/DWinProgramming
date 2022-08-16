@@ -114,7 +114,7 @@ struct CBPARAM
 __gshared wchar[MAX_LENGTH] szString = 0;
 
 extern (Windows)
-BOOL DlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+BOOL DlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) nothrow
 {
     switch (message)
     {
@@ -123,6 +123,7 @@ BOOL DlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
             return TRUE;
 
         case WM_COMMAND:
+            break;
 
             switch (wParam)
             {
@@ -136,9 +137,11 @@ BOOL DlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     return TRUE;
 
                 default:
+                    break;
             }
 
         default:
+            break;
     }
 
     return FALSE;

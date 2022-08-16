@@ -1,6 +1,14 @@
 module mydll;
 
-import std.c.windows.windows;
+pragma(lib, "gdi32.lib");
+pragma(lib, "comdlg32.lib");
+pragma(lib, "winmm.lib");
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
+import core.sys.windows.mmsystem;
 
 version(none)
 {

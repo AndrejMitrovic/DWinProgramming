@@ -1,6 +1,12 @@
 module dllmodule;
 
-import std.c.windows.windows;
+pragma(lib, "gdi32.lib");
+pragma(lib, "comdlg32.lib");
+import core.sys.windows.windef;
+import core.sys.windows.winuser;
+import core.sys.windows.wingdi;
+import core.sys.windows.winbase;
+import core.sys.windows.commdlg;
 import core.sys.windows.dll;
 
 __gshared HINSTANCE g_hInst;

@@ -1,5 +1,7 @@
 module StrLib;
 
+import std.algorithm;
+
 enum MAX_STRINGS = 256;
 enum MAX_LENGTH  = 64;
 
